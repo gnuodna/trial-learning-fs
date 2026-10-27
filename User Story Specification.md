@@ -1,10 +1,12 @@
-# ĐẶC TẢ USER STORIES & ACCEPTANCE CRITERIA (ANSERA PLATFORM)
+# ĐẶC TẢ YÊU CẦU — ANSERA LEARNING TRIAL
 
-## 1. Document Information & Version History
+<a id="1-thong-tin"></a>
+
+## 1. Thông tin tài liệu (Document Information)
 
 **Tác giả:** Duong Duc An  
-**Phiên bản:** 3.0  
-**Ngày cập nhật:** 2026-10-26  
+**Phiên bản:** 3.1  
+**Ngày cập nhật:** 2026-10-27  
 **Phạm vi:** Learning Trial cho từng khóa học — mua một lần.  
 **Trạng thái:** Bản refactor sẵn sàng BA review; BD-001–BD-008 là quyết định đã xác nhận trong prompt, Open Questions chưa phải chính sách được phê duyệt.
 
@@ -12,16 +14,37 @@
 | --- | --- |
 | 2.1 | Bản trước: 6 story, trial 7 ngày/50% 3 bài; còn giả định subscription, xác thực 0đ và retry 3 lần. |
 | 3.0 | Tổ chức 11 story/5 Epic; mua một lần, hủy lịch không hủy trial, mua sớm, tự mua cuối kỳ, cấp quyền; BR, trạng thái, truy vết, thông báo và ghi chú UI được đồng bộ. |
+| 3.1 | Trình bày theo Specific requirements của mẫu SRS được chọn; nhóm chức năng theo user class; UI và hình để trống; giữ baseline và các câu hỏi chưa chốt. |
 
 Nguồn dự án: prompt “REFACTOR ANSERA LEARNING TRIAL – USER STORY SPECIFICATION V3.0”, mục 3–14 do người dùng cung cấp ngày 2026-10-26; file v2.1 tại repository `gnuodna/trial-learning-fs`, blob `d84ce48e836a44da63e9ef725ee323e1d62b13a8`. Khi khác nhau, BD đã xác nhận trong prompt ưu tiên hơn v2.1 và ảnh. Không suy ra phê duyệt chính sách từ mockup hoặc kết quả review của agent.
 
-## 2. Feature Overview
+**Cách đọc:** Đây là đặc tả phạm vi Learning Trial, trình bày lại theo cấu trúc §3 của mẫu Amazing Lunch Indicator được người dùng chọn. Không tuyên bố là SRS đầy đủ của toàn nền tảng hoặc đã chứng nhận tiêu chuẩn. Chỉ sử dụng cấu trúc mẫu; không kế thừa yêu cầu, vai trò hay ngưỡng chất lượng của hệ thống nhà hàng.
+
+**Quy ước định danh:** Giữ US-* làm ID chức năng hiện hành và giữ nguyên BD/BR/MSG/ST/AC/OQ để không đứt truy vết. Không cấp lại ID FR/ERR hoặc tự gán HTTP status trong lần đổi cách trình bày. Mỗi chức năng giữ statement, rationale, preconditions, scenario Given–When–Then, business rules và dependencies.
+
+## Mục lục
+
+- [1. Thông tin tài liệu](#1-thong-tin)
+- [2. Mô tả tổng quan](#2-tong-quan)
+- [3. Yêu cầu chi tiết](#3-specific-requirements)
+  - [3.1. Giao diện ngoài](#31-external-interfaces)
+  - [3.2. Yêu cầu chức năng](#32-functional-requirements)
+  - [3.3. Yêu cầu hiệu năng](#33-performance-requirements)
+  - [3.4. Ràng buộc thiết kế](#34-design-constraints)
+  - [3.5. Thuộc tính hệ thống](#35-system-attributes)
+- [4. Phụ lục](#4-phu-luc)
+
+<a id="2-tong-quan"></a>
+
+## 2. Mô tả tổng quan (Overall Description)
+
+### 2.1. Phạm vi tính năng
 
 Học viên đủ điều kiện liên kết phương thức thanh toán, đồng ý khoản mua một lần và kích hoạt 168 giờ trial cho một khóa học. Trong hạn chỉ xem 50% đầu video của từng bài trong 3 bài đầu, xem lại không giới hạn; nội dung khác và tài liệu bảo vệ bị khóa. Học viên được hủy lịch thanh toán trước hạn và vẫn giữ trial, hoặc mua sớm để mở đầy đủ. Tại hết hạn, chỉ tự mua khi còn ủy quyền hợp lệ, chưa hủy và chưa sở hữu. Chưa có thanh toán thành công thì mất toàn bộ trial đúng hạn, kể cả khi giao dịch còn đang xử lý.
 
 Authentication là dependency hiện hữu. Checkout mua trực tiếp/mua sau hết hạn dùng luồng mua một lần hiện hữu, áp dụng cùng kiểm tra thanh toán và cấp quyền trong tài liệu này; không thêm story ngoài baseline. Không bao gồm thiết kế mới OAuth, hoàn tiền, đa tài khoản, bundle, phiên bản khóa hoặc retry nhiều ngày. Giá trong ảnh không phải bảng giá được phê duyệt.
 
-## 3. Confirmed Business Decisions
+### 2.2. Quyết định nghiệp vụ đã xác nhận
 
 | ID | Quyết định đã được xác nhận |
 | --- | --- |
@@ -34,151 +57,167 @@ Authentication là dependency hiện hữu. Checkout mua trực tiếp/mua sau h
 | BD-007 | Hết hạn chưa mua thì mất toàn bộ quyền trial; refresh/đăng nhập lại không khôi phục. |
 | BD-008 | Một lần trial cho mỗi học viên/khóa; người đã sở hữu không được trial/mua trùng. Không suy diễn chính sách nhiều tài khoản/thẻ dùng chung/bundle/phiên bản khóa. |
 
-## 4. User Story Backlog by Epic
+### 2.3. Nhóm người dùng và tác vụ tự động
 
-### Authentication
-
-| User Story ID | Tên | Priority | Xử lý so với v2.1 |
-| --- | --- | --- | --- |
-| US-AUTH-001 | Đăng ký tài khoản học viên mới | P0 | KEEP |
-
-### Trial Enrollment
-
-| User Story ID | Tên | Priority | Xử lý so với v2.1 |
-| --- | --- | --- | --- |
-| US-CRS-002 | Xem thông tin khóa học và quyền học thử | P0 | KEEP / REVISE |
-| US-ENR-003 | Xem và xác nhận điều kiện học thử | P1 | KEEP / REVISE |
-| US-PAY-004 | Liên kết phương thức thanh toán và kích hoạt học thử | P0 | KEEP / REVISE |
-
-### Trial Experience
-
-| User Story ID | Tên | Priority | Xử lý so với v2.1 |
-| --- | --- | --- | --- |
-| US-PLAY-005 | Trải nghiệm nội dung học thử có giới hạn | P0 | KEEP / REVISE |
-| US-TRIAL-007 | Xem trạng thái và thời gian học thử | P1 | NEW |
-
-### Purchase & Payment
-
-| User Story ID | Tên | Priority | Xử lý so với v2.1 |
-| --- | --- | --- | --- |
-| US-PAY-008 | Hủy thanh toán tự động sau học thử | P0 | NEW |
-| US-PAY-009 | Tự động mua khóa học khi kết thúc thời hạn học thử | P0 | NEW / EXTRACT FROM US-PAY-004 |
-| US-PAY-010 | Thanh toán mở khóa khóa học trước thời hạn | P0 | NEW |
-
-### Access Management
-
-| User Story ID | Tên | Priority | Xử lý so với v2.1 |
-| --- | --- | --- | --- |
-| US-EXP-006 | Tự động hết hạn học thử và thu hồi quyền truy cập | P0 | KEEP / REVISE |
-| US-ACCESS-011 | Cấp quyền truy cập đầy đủ sau khi mua khóa học thành công | P0 | NEW |
-
-## 5. Business Rules – Learning Trial
-
-Áp dụng cho cặp học viên–khóa học. Giữ mã BR-001–BR-014 theo baseline được chỉ định; không đổi sang quy ước mã khác.
-
-| ID | Business Rule | Nguồn |
+| Nhóm | Vai trò trong phạm vi Learning Trial | Chức năng |
 | --- | --- | --- |
-| BR-001 | Một học viên chỉ được kích hoạt trial một lần cho mỗi khóa học; kích hoạt lặp/đăng nhập lại không đặt lại lịch sử. | BD-008 |
-| BR-002 | Trial bắt đầu khi kích hoạt thành công; expiry = start + 168 giờ. Quyền trial chỉ hợp lệ khi thời gian máy chủ nhỏ hơn expiry. | BD-002 |
-| BR-003 | Trong trial còn hiệu lực chỉ được phát phần đầu tối đa 50% thời lượng video của từng bài trong 3 bài đầu; xem lại phần được phép không giới hạn. Bài khác và tài liệu bảo vệ bị khóa. | BD-002 |
-| BR-004 | Tại expiry, nếu chưa có quyền đã mua từ thanh toán thành công, thu hồi toàn bộ quyền trial kể cả phần 50% của 3 bài đầu. | BD-006, BD-007 |
-| BR-005 | Học viên đã sở hữu khóa học không được kích hoạt trial hoặc bị tạo khoản mua trùng cho khóa đó qua các luồng bình thường. | BD-005, BD-008 |
-| BR-006 | Trước kích hoạt, phải có phương thức được gateway hỗ trợ và consent rõ ràng cho giá/tiền tệ, thời điểm thu tiền một lần; thay đổi điều kiện phải xác nhận lại. | BD-003 |
-| BR-007 | Hủy lịch tự mua thành công trước expiry ngăn khoản tự thu, giữ nguyên trial và expiry ban đầu. | BD-004 |
-| BR-008 | Mua sớm thành công vô hiệu hóa lịch tự mua cuối kỳ chưa thực thi và giữ tiến trình học nếu có. | BD-005 |
-| BR-009 | Tự mua thất bại không cấp paid access; quyền trial chấm dứt tại expiry. MVP không có grace period nhiều ngày hoặc lịch tự retry. | BD-006 |
-| BR-010 | Thanh toán thành công được gateway xác minh cấp quyền toàn bộ nội dung khóa đã mua, gỡ giới hạn trial và lưu ownership qua các phiên. | BD-005, BD-006 |
-| BR-011 | Các luồng mua sớm/tự mua và yêu cầu/callback lặp cho cùng học viên–khóa phải phối hợp để không thực hiện khoản mua trùng. Khi giao dịch chưa rõ kết quả, không tạo khoản thu độc lập khác. | BD-005, BD-006 |
-| BR-012 | Backend/media delivery thực thi quyền của đúng học viên/khóa/tài nguyên và thời hạn; sửa frontend, URL trực tiếp hoặc đăng nhập lại không vượt được quyền. | BD-002, BD-007 |
-| BR-013 | Khóa học được mua một lần; sau mua không tạo khoản thu định kỳ hoặc subscription cho Learning Trial. | BD-001 |
-| BR-014 | Hủy lịch tự mua không cấm học viên chủ động mua khóa học; mua thất bại không mất trial còn lại trước expiry. | BD-004, BD-005 |
+| Khách truy cập | Đăng ký tài khoản để tham gia học tập | US-AUTH-001 |
+| Học viên | Xem khóa, consent, kích hoạt và trải nghiệm trial; quản lý lịch mua, mua sớm và nhận quyền đã mua | US-CRS-002, US-ENR-003, US-PAY-004, US-PLAY-005, US-TRIAL-007, US-PAY-008, US-PAY-009, US-PAY-010, US-ACCESS-011 |
+| Quản trị viên vận hành | Mục tiêu bảo vệ nội dung và thực thi hết hạn tự động theo story hiện có | US-EXP-006 |
 
-## 6. State Definitions & Transition Matrix
+Đây là cách nhóm lại các vai trò đã có trong baseline, không bổ sung nhóm người dùng hoặc quyền quản trị mới. US-PAY-009 và US-ACCESS-011 do hệ thống xử lý để phục vụ học viên; US-EXP-006 do hệ thống xử lý theo mục tiêu vận hành. Không suy ra cần thao tác thủ công hoặc màn hình quản trị mới.
 
-### 6.1. Ba chiều trạng thái độc lập
+<a id="3-specific-requirements"></a>
 
-| Chiều | Trạng thái | Ý nghĩa |
-| --- | --- | --- |
-| trial_status | NOT_STARTED | Chưa kích hoạt trial; thất bại liên kết không tiêu thụ quyền. |
-| trial_status | TRIAL_ACTIVE | Đã kích hoạt, còn hạn và chưa chuyển đổi mua thành công. |
-| trial_status | TRIAL_EXPIRED | Đã hết 168 giờ khi chưa mua thành công. |
-| trial_status | CONVERTED | Trial đã dùng được chuyển đổi sang mua thành công, kể cả thành công xác minh về sau expiry. |
-| automatic_payment_status | NONE | Chưa lập lịch tự mua. |
-| automatic_payment_status | SCHEDULED | Lịch được lập và chưa có kết quả cuối; không có nghĩa giao dịch đã thành công. |
-| automatic_payment_status | CANCELED | Lịch đã vô hiệu hóa do hủy thành công hoặc đã mua sớm. Không phải hủy quyền trial. |
-| automatic_payment_status | COMPLETED | Khoản tự mua của lịch đã được xác minh thành công. Không dùng cho giao dịch mua chủ động. |
-| automatic_payment_status | FAILED | Tự mua thất bại dứt khoát hoặc không thể thực hiện do phương thức/ủy quyền hết hiệu lực. |
-| course_access | NOT_OWNED | Không có quyền trial hiệu lực hoặc ownership đã mua. |
-| course_access | TRIAL_LIMITED | Chỉ có giới hạn trial hiện còn hiệu lực. |
-| course_access | PAID_ACTIVE | Có ownership từ thanh toán thành công đã được xác minh. |
+## 3. Yêu cầu chi tiết (Specific Requirements)
 
-`course_access` là chiều quyền/ownership khái niệm của baseline; lịch sử đã dùng trial được lưu riêng, không xóa khi quyền về NOT_OWNED. Mua trực tiếp chưa từng trial giữ trial_status = NOT_STARTED và automatic_payment_status = NONE, đồng thời PAID_ACTIVE; không tiêu thụ trial để rồi cho mua/trial trùng.
+<a id="31-external-interfaces"></a>
 
-Không thêm `PROCESSING` vào enum thanh toán tự động đã chốt. Giao dịch đang thực thi/chưa rõ kết quả có dấu vết xử lý riêng của transaction, phân biệt với lịch. Trong thời gian này lịch chưa có kết quả cuối vẫn SCHEDULED; phải kiểm tra transaction trước hủy/gửi mua. Đây là ràng buộc nhất quán dẫn xuất từ yêu cầu chống thu trùng, không phải quyết định retry hoặc hoàn tiền. Tên trường kỹ thuật, timeout và thời hạn đối soát chờ OQ-002.
+### 3.1. Yêu cầu giao diện ngoài (External Interface Requirements)
 
-### 6.2. Ma trận chuyển dịch
+#### 3.1.1. Giao diện người dùng (User Interfaces)
 
-Ký hiệu bộ ba: `trial_status / automatic_payment_status / course_access`; “giữ” nghĩa không thay đổi chiều đó. Guards được kiểm tra bằng trạng thái backend/thời gian máy chủ. Không chỉ dựa vào nút hoặc scheduler.
+Phần đặc tả UI và hình minh họa bên dưới chủ động để trống theo yêu cầu ngày 2026-10-27. Chỉ có tên chức năng và vị trí bổ sung; các mô tả hành vi trong §3.2 và thông báo tại §4.3 vẫn là nội dung yêu cầu cần giữ khi thiết kế UI.
 
-| ID | Trước | Trigger / Vai trò | Preconditions / Guard | Sau | Quyền / ngoại lệ / AC truy vết |
-| --- | --- | --- | --- | --- | --- |
-| ST-01 | NOT_STARTED / NONE / NOT_OWNED | Kích hoạt / học viên + hệ thống | Đủ điều kiện, consent cuối khớp giá/lịch, phương thức xác nhận hỗ trợ | TRIAL_ACTIVE / SCHEDULED / TRIAL_LIMITED | 168 giờ; US-PAY-004.AC1. |
-| ST-02 | NOT_STARTED / NONE / NOT_OWNED | Liên kết lỗi/chưa rõ / gateway | Chưa đủ điều kiện kích hoạt | Giữ | Không tạo quyền/lịch; US-PAY-004.AC4, AC6. |
-| ST-03 | TRIAL_ACTIVE / SCHEDULED / TRIAL_LIMITED | Hủy ngày 2 / học viên | Hủy được chấp nhận trước expiry và trước khi giao dịch được gửi | TRIAL_ACTIVE / CANCELED / TRIAL_LIMITED | Giữ expiry gốc; US-PAY-008.AC1, AC4. |
-| ST-04 | TRIAL_ACTIVE / CANCELED / TRIAL_LIMITED | Hủy lặp / học viên | Lịch đã vô hiệu hóa | Giữ | Không đổi thời hạn; US-PAY-008.AC2. |
-| ST-05 | TRIAL_ACTIVE / SCHEDULED hoặc CANCELED / TRIAL_LIMITED | Mua sớm thành công / gateway + hệ thống | Giao dịch chủ động xác minh thành công | CONVERTED / CANCELED / PAID_ACTIVE | Vô hiệu lịch và giữ tiến trình; US-PAY-010.AC1, AC2; US-ACCESS-011.AC1. |
-| ST-06 | TRIAL_ACTIVE / SCHEDULED hoặc CANCELED / TRIAL_LIMITED | Mua sớm thất bại / gateway | Thất bại dứt khoát, vẫn trước expiry | Giữ | Không hủy lịch đang hợp lệ; US-PAY-010.AC3. |
-| ST-07 | TRIAL_ACTIVE / CANCELED / TRIAL_LIMITED | Đạt expiry / hệ thống | Chưa sở hữu | TRIAL_EXPIRED / CANCELED / NOT_OWNED | Không tự thu, khóa toàn bộ; US-EXP-006.AC2. |
-| ST-08 | TRIAL_ACTIVE / SCHEDULED / TRIAL_LIMITED | Đạt expiry / hệ thống | Chưa sở hữu; tự mua đủ điều kiện, chưa có giao dịch cạnh tranh | TRIAL_EXPIRED / SCHEDULED / NOT_OWNED | Thực hiện một khoản mua; đang chờ không có quyền trial/paid; US-PAY-009.AC8, US-EXP-006.AC1. |
-| ST-09 | TRIAL_EXPIRED / SCHEDULED / NOT_OWNED | Tự mua thành công / gateway | Kết quả xác minh khớp cùng giao dịch | CONVERTED / COMPLETED / PAID_ACTIVE | Ghi giao dịch và cấp quyền; US-PAY-009.AC1, US-ACCESS-011.AC1; lỗi cấp quyền xem ngoại lệ 6.3. |
-| ST-10 | TRIAL_EXPIRED / SCHEDULED / NOT_OWNED | Tự mua thất bại / gateway hoặc kiểm tra ủy quyền | Kết quả thất bại dứt khoát hoặc không thể gửi hợp lệ | TRIAL_EXPIRED / FAILED / NOT_OWNED | Không retry/grace tự đặt; US-PAY-009.AC4, AC5. |
-| ST-11 | TRIAL_EXPIRED / CANCELED hoặc FAILED / NOT_OWNED | Mua chủ động sau hạn / checkout hiện hữu | Không có giao dịch chưa rõ kết quả, mua được xác minh thành công | CONVERTED / giữ CANCELED hoặc FAILED / PAID_ACTIVE | Không viết lại lịch sử tự mua thành COMPLETED; US-ACCESS-011.AC1. |
-| ST-12 | TRIAL_EXPIRED / SCHEDULED / NOT_OWNED | Mua bắt đầu trước hạn, thành công về chậm / gateway | Cùng giao dịch chủ động, chưa có khoản thu độc lập khác | CONVERTED / CANCELED / PAID_ACTIVE | Không phục hồi trial; US-PAY-010.AC5. |
-| ST-13 | CONVERTED / CANCELED hoặc COMPLETED hoặc FAILED / PAID_ACTIVE | Callback/tác vụ lặp / hệ thống | Kết quả mua đã xác minh | Giữ | Không thu trùng/hạ quyền; US-ACCESS-011.AC4; US-EXP-006.AC5. |
-| ST-14 | NOT_STARTED / NONE / NOT_OWNED | Mua trực tiếp / checkout hiện hữu | Chưa sở hữu; thanh toán xác minh thành công | NOT_STARTED / NONE / PAID_ACTIVE | Cấp quyền khóa mua, không tạo trial/lịch; US-ACCESS-011.AC1, AC2. |
+##### 3.1.1.1. US-AUTH-001 — Đăng ký tài khoản học viên mới
 
-### 6.3. Bất biến và ngoại lệ
+**Đặc tả UI**
 
-- Trial có hiệu lực ở khoảng `[trial_start, trial_expires_at)`. Scheduler chạy muộn không kéo dài quyền. Tại đúng expiry, quyền trial kết thúc; ownership đã mua có ưu tiên khi kiểm tra truy cập.
-- Không cho TRIAL_EXPIRED/CONVERTED trở lại TRIAL_ACTIVE cho cùng học viên–khóa; không cho CANCELED trở lại SCHEDULED bằng refresh/hủy lặp; không cấp PAID_ACTIVE từ client redirect hoặc gửi request.
-- Hủy được chấp nhận trước hạn phải ngăn gửi thu; nếu giao dịch đã thực thi hoặc yêu cầu đến muộn, không báo thành công giả. Xử lý hoàn/void hoặc ngoại lệ tiếp nhận muộn chờ OQ-003. Không tự mở rộng quyền hủy sau hạn.
-- Chậm callback/timeout không bằng FAILED. Khóa trial khi hết hạn, giữ dấu vết transaction để đối soát; không tự cấp quyền hoặc khởi tạo khoản thu mới. Callback thành công xác minh của cùng giao dịch được xử lý theo ST-09/ST-12; cách giải quyết kết quả chưa rõ kéo dài chờ OQ-002.
-- Kiểm tra nguồn gateway, khóa học, học viên, số tiền/tiền tệ và giao dịch trước cấp quyền. Callback trùng không tạo thu/ownership/biên lai trùng. Callback cũ/mâu thuẫn không hạ ownership; đối soát trước thay kết quả cuối.
-- Thanh toán đã thành công nhưng cập nhật quyền lỗi: giữ giao dịch thành công, MSG-020 và hoàn tất cấp quyền có thể xử lý lại không thu thêm (US-ACCESS-011.AC5). Không báo paid access đã sẵn sàng khi chưa cập nhật quyền; không đổi thanh toán thành FAILED vì lỗi nội bộ. Các bộ ba ST-09/ST-12 là trạng thái đích sau hoàn tất cấp quyền.
-- Mua chủ động thành công sau lịch FAILED giữ FAILED của lịch; không đồng nhất thành công giao dịch chủ động với automatic_payment_status = COMPLETED. Không hạ PAID_ACTIVE bởi tác vụ hết hạn. Refund/chargeback không được tự thiết kế trong phạm vi này.
+<!-- Bổ sung đặc tả UI tại đây. -->
 
-## 7. Message Catalog
+**Hình minh họa**
 
-Thông điệp có placeholder phải hiển thị giá/tiền tệ và thời gian có múi giờ thực tế. Nội dung là bản copy đặc tả, không coi dữ liệu minh họa trên ảnh là giá đã chốt.
+<!-- Bổ sung hình minh họa tại đây. -->
 
-| MSG ID | Type | Nội dung tiếng Việt | Trigger condition |
+##### 3.1.1.2. US-CRS-002 — Xem thông tin khóa học và quyền học thử
+
+**Đặc tả UI**
+
+<!-- Bổ sung đặc tả UI tại đây. -->
+
+**Hình minh họa**
+
+<!-- Bổ sung hình minh họa tại đây. -->
+
+##### 3.1.1.3. US-ENR-003 — Xem và xác nhận điều kiện học thử
+
+**Đặc tả UI**
+
+<!-- Bổ sung đặc tả UI tại đây. -->
+
+**Hình minh họa**
+
+<!-- Bổ sung hình minh họa tại đây. -->
+
+##### 3.1.1.4. US-PAY-004 — Liên kết phương thức thanh toán và kích hoạt học thử
+
+**Đặc tả UI**
+
+<!-- Bổ sung đặc tả UI tại đây. -->
+
+**Hình minh họa**
+
+<!-- Bổ sung hình minh họa tại đây. -->
+
+##### 3.1.1.5. US-PLAY-005 — Trải nghiệm nội dung học thử có giới hạn
+
+**Đặc tả UI**
+
+<!-- Bổ sung đặc tả UI tại đây. -->
+
+**Hình minh họa**
+
+<!-- Bổ sung hình minh họa tại đây. -->
+
+##### 3.1.1.6. US-TRIAL-007 — Xem trạng thái và thời gian học thử
+
+**Đặc tả UI**
+
+<!-- Bổ sung đặc tả UI tại đây. -->
+
+**Hình minh họa**
+
+<!-- Bổ sung hình minh họa tại đây. -->
+
+##### 3.1.1.7. US-PAY-008 — Hủy thanh toán tự động sau học thử
+
+**Đặc tả UI**
+
+<!-- Bổ sung đặc tả UI tại đây. -->
+
+**Hình minh họa**
+
+<!-- Bổ sung hình minh họa tại đây. -->
+
+##### 3.1.1.8. US-PAY-009 — Tự động mua khóa học khi kết thúc thời hạn học thử
+
+**Đặc tả UI**
+
+<!-- Bổ sung đặc tả UI tại đây. -->
+
+**Hình minh họa**
+
+<!-- Bổ sung hình minh họa tại đây. -->
+
+##### 3.1.1.9. US-PAY-010 — Thanh toán mở khóa khóa học trước thời hạn
+
+**Đặc tả UI**
+
+<!-- Bổ sung đặc tả UI tại đây. -->
+
+**Hình minh họa**
+
+<!-- Bổ sung hình minh họa tại đây. -->
+
+##### 3.1.1.10. US-EXP-006 — Tự động hết hạn học thử và thu hồi quyền truy cập
+
+**Đặc tả UI**
+
+<!-- Bổ sung đặc tả UI tại đây. -->
+
+**Hình minh họa**
+
+<!-- Bổ sung hình minh họa tại đây. -->
+
+##### 3.1.1.11. US-ACCESS-011 — Cấp quyền truy cập đầy đủ sau khi mua khóa học thành công
+
+**Đặc tả UI**
+
+<!-- Bổ sung đặc tả UI tại đây. -->
+
+**Hình minh họa**
+
+<!-- Bổ sung hình minh họa tại đây. -->
+
+#### 3.1.2. Giao diện phần cứng (Hardware Interfaces)
+
+Chưa có yêu cầu giao diện phần cứng chuyên dụng trong baseline Learning Trial. Chưa xác định thiết bị hỗ trợ, cấu hình tối thiểu hoặc ngoại vi; không áp dụng thông số phần cứng/GPS từ mẫu.
+
+#### 3.1.3. Giao diện phần mềm (Software Interfaces)
+
+| Thành phần liên quan trong baseline | Trách nhiệm / dữ liệu trao đổi đã có | Truy vết | Chi tiết còn thiếu |
 | --- | --- | --- | --- |
-| MSG-001 | Lỗi | Vui lòng nhập thông tin | Thiếu trường bắt buộc khi gửi đăng ký hoặc liên kết phương thức. |
-| MSG-002 | Cảnh báo | Tên người dùng đã tồn tại | Username đăng ký bị trùng; gắn tại username, không tại password. |
-| MSG-003 | Lỗi | Thông tin chưa hợp lệ | Password dưới 8 ký tự/xác nhận không khớp; email hoặc dữ liệu thanh toán sai quy tắc của phương thức/gateway đã chọn. |
-| MSG-004 | Thông báo | Bạn đã sở hữu khóa học này. Hãy vào học để tiếp tục. | Người đã mua yêu cầu trial/mua lại; giữ ID chống trùng sở hữu từ v2.1. |
-| MSG-005 | Thông báo | Bạn đã hoàn thành thời lượng học thử của bài học này. Vui lòng mở khóa để xem tiếp toàn bộ nội dung. | Chạm/tua tới giới hạn 50% video được trial cho phép. |
-| MSG-006 | Cảnh báo | Thời gian học thử 7 ngày của bạn cho khóa học này đã kết thúc. Vui lòng thanh toán để tiếp tục học tập. | Trial đã hết hạn và chưa sở hữu; không dùng khi chỉ hủy thanh toán trước hạn. |
-| MSG-007 | Thành công | Đã kích hoạt học thử. Bạn có thể học đến {expires_at}. Khoản mua khóa học một lần {amount} {currency} dự kiến được thanh toán lúc {payment_at}, trừ khi bạn hủy trước hạn. | Kích hoạt và lập lịch thành công; thời gian có múi giờ. |
-| MSG-008 | Thành công | Đã hủy thanh toán tự động sau học thử. Bạn vẫn được học thử đến {expires_at} và có thể chủ động mua khóa học. | Hủy đã được ghi nhận thành công, kể cả yêu cầu lặp. |
-| MSG-009 | Thành công | Mua khóa học thành công. Bạn đã có toàn bộ nội dung; khoản mua tự động cuối kỳ đã được vô hiệu hóa. | Mua sớm và cấp quyền hoàn tất. |
-| MSG-010 | Thành công | Khoản mua khóa học một lần sau học thử đã thanh toán thành công. Bạn có thể tiếp tục học toàn bộ khóa học. | Tự mua và cấp quyền hoàn tất. |
-| MSG-011 | Lỗi | Không thể hoàn tất thanh toán tự động sau học thử. Quyền học thử đã hết hạn. Bạn có thể chủ động mua khóa học để tiếp tục. | Tại/sau expiry có kết quả thất bại xác minh hoặc phương thức/ủy quyền không đủ điều kiện. |
-| MSG-012 | Đang xử lý | Yêu cầu đang được kiểm tra kết quả. Vui lòng kiểm tra trạng thái trước khi thực hiện thanh toán khác. | Liên kết/giao dịch chưa rõ kết quả hoặc yêu cầu mua lặp khi đang xử lý; không ngụ ý cấp quyền. |
-| MSG-013 | Cảnh báo | Chưa thể xác nhận hủy: thời hạn hủy đã kết thúc hoặc giao dịch đang được xử lý. Vui lòng kiểm tra trạng thái thanh toán. | Yêu cầu hủy tới hạn/đang có giao dịch thực thi; không hứa hủy/hoàn tiền. |
-| MSG-014 | Thông báo | Bạn đã sử dụng quyền học thử của khóa học này. Mỗi học viên chỉ được học thử một lần cho mỗi khóa học. | Ngăn trial lặp; với trial còn hạn vẫn cho tiếp tục học. |
-| MSG-015 | Cảnh báo | Vui lòng xác nhận điều kiện học thử và khoản mua khóa học một lần sau học thử trước khi tiếp tục. | Chưa có consent hợp lệ. |
-| MSG-016 | Lỗi | Không thể xác thực hoặc liên kết phương thức thanh toán. Vui lòng kiểm tra hoặc chọn phương thức được hỗ trợ khác. | Gateway từ chối liên kết/ủy quyền, chưa kích hoạt trial. |
-| MSG-017 | Thông báo | Nội dung này chỉ được mở sau khi mua khóa học thành công. | Trial yêu cầu bài ngoài 3 bài đầu hoặc tài liệu bảo vệ. |
-| MSG-018 | Lỗi | Chưa thể xác nhận hủy thanh toán tự động. Vui lòng kiểm tra lại trạng thái trước thời điểm hết hạn. | Lỗi ghi nhận/vô hiệu hóa lịch, chưa được xác nhận CANCELED. |
-| MSG-019 | Lỗi | Thanh toán mua khóa học chưa thành công. Bạn vẫn có thể học thử đến {expires_at} nếu thời hạn chưa kết thúc. | Mua chủ động thất bại dứt khoát; không dùng cho giao dịch chưa rõ kết quả. |
-| MSG-020 | Đang xử lý | Thanh toán đã thành công, hệ thống đang hoàn tất cấp quyền khóa học. Bạn không cần thanh toán lại. | Thành công đã xác minh nhưng cập nhật entitlement chưa hoàn tất. |
+| Authentication hiện hữu | Định danh và phiên học viên; đăng ký là dependency | US-AUTH-001; preconditions các chức năng học viên | Contract tích hợp, cơ chế phiên; không thiết kế lại OAuth |
+| Gateway thanh toán | Liên kết phương thức, ủy quyền khoản mua một lần, xác minh kết quả cho đúng giao dịch/khóa/học viên/số tiền/tiền tệ | US-PAY-004; US-PAY-009.AC9; US-ACCESS-011 | Gateway/phương thức và contract chưa chốt; OQ-001–OQ-003 |
+| Backend / media delivery | Kiểm tra quyền nội dung, mốc 50%, thời hạn và ownership | BR-012; US-PLAY-005; US-EXP-006; US-ACCESS-011.AC6 | Endpoint, schema và cách phân phối media chưa được đặc tả |
+| Checkout mua một lần hiện hữu | Mua sớm, mua trực tiếp/mua sau hết hạn và cấp quyền dùng chung | US-PAY-010; US-ACCESS-011; ST-11, ST-14 | Giá/thuế/tiền tệ và khóa giá theo OQ-004 |
+| Kênh email / thông báo hiện hữu | Email kích hoạt và thông báo kết quả theo scenario hiện có | US-PAY-004.AC1; US-PAY-009.AC1; §4.3 | Nhà cung cấp, giao thức và cam kết giao nhận chưa chốt |
 
-## 8. Detailed User Story Specifications
+#### 3.1.4. Giao diện truyền thông (Communications Interfaces)
 
-### 8.1. US-AUTH-001 – Đăng ký tài khoản học viên mới
+Baseline có yêu cầu trao đổi với gateway và backend/media, xử lý callback trùng/chậm và không tin client redirect để cấp quyền. Chưa có quyết định về giao thức, phiên bản, endpoint, payload, cơ chế xác thực callback, timeout hoặc SLA truyền thông. Các nội dung này cần được đặc tả khi chọn tích hợp; không tự áp thông số hoặc cách truyền thông trong mẫu.
 
-#### A. General Information
+<a id="32-functional-requirements"></a>
+
+### 3.2. Yêu cầu chức năng (Functional Requirements)
+
+Nhóm theo user class như mẫu tham chiếu. **ID/TITLE** nằm trong bảng thông tin; **DESC** là statement và scenario; **RAT** là giá trị ở So that và bối cảnh; **DEP** là phụ thuộc. Input nằm ở Given/When; xử lý và Output nằm ở Then. Các scenario giữ nguyên nội dung baseline v3.0; thiết kế UI tách riêng ở §3.1.1.
+
+#### 3.2.1. User class 1 — Khách truy cập chưa có tài khoản
+
+##### 3.2.1.1. US-AUTH-001 — Đăng ký tài khoản học viên mới
+
+**Thông tin chức năng — ID / TITLE**
 
 | Thuộc tính | Giá trị |
 | --- | --- |
@@ -188,21 +227,21 @@ Thông điệp có placeholder phải hiển thị giá/tiền tệ và thời g
 | Priority | P0 |
 | User Role | khách truy cập mới chưa có tài khoản trên ANSERA |
 
-#### B. User Story Statement
+**Mô tả và giá trị — DESC / RAT**
 
 **As a** khách truy cập mới chưa có tài khoản trên ANSERA  
 **I want to** đăng ký tài khoản bằng username và mật khẩu cá nhân  
 **So that** tôi có tài khoản định danh để học tập và lưu tiến trình cá nhân.
 
-#### C. Business Context
+**Bối cảnh — RAT**
 
 Dependency xác thực của Learning Trial; giữ hành vi đăng ký hiện hữu, không thiết kế lại Authentication.
 
-#### D. Preconditions
+**Điều kiện tiên quyết / Input**
 
 Khách chưa đăng nhập và đang ở trang đăng ký.
 
-#### E. Acceptance Criteria
+**Scenario — xử lý và Output**
 
 **AC1: Đăng ký thành công — Happy Path**
 
@@ -234,39 +273,19 @@ Khách chưa đăng nhập và đang ở trang đăng ký.
 - **When** gửi xác nhận không trùng password.
 - **Then** chặn đăng ký, đánh dấu trường xác nhận lỗi và hiển thị MSG-003.
 
-#### F. UI Component Specification
-
-![US-AUTH-001_ Homepage khi truy cập vào trang trước khi đăng ký](./H%E1%BB%8Dc%20th%E1%BB%AD%20screen./US-AUTH-001_%20Homepage%20khi%20truy%20c%E1%BA%ADp%20v%C3%A0o%20trang%20tr%C6%B0%E1%BB%9Bc%20khi%20%C4%91%C4%83ng%20k%C3%AD.png)
-
-![US-AUTH-001_ Đăng ký tài khoản học viên mới](./H%E1%BB%8Dc%20th%E1%BB%AD%20screen./US-AUTH-001_%20%C4%90%C4%83ng%20k%C3%BD%20t%C3%A0i%20kho%E1%BA%A3n%20h%E1%BB%8Dc%20vi%C3%AAn%20m%E1%BB%9Bi.png)
-
-![US-AUTH-001_ Đăng ký (Lỗi validation MSG-001, MSG-002, MSG-003)](./H%E1%BB%8Dc%20th%E1%BB%AD%20screen./US-AUTH-001_%20%C4%90%C4%83ng%20k%C3%BD%20(L%E1%BB%97i%20validation%20MSG-001,%20MSG-002,%20MSG-003).png)
-
-| STT | Tên thành phần | Type | Được chỉnh sửa | Bắt buộc | Giá trị mặc định | Mô tả |
-| :---: | --- | :---: | :---: | :---: | :---: | --- |
-| 1 | Button tham gia miễn phí | Button | N/A | N/A | N/A | Nút kêu gọi hành động trên header/banner trang chủ. |
-| 2 | Button tham gia miễn phí | Button | N/A | N/A | N/A | Nút kêu gọi hành động ở phần thân trang chủ. |
-| 3 | Trường thông tin username | Text | Yes | Yes | N/A | - Bắt buộc nhập.<br>- Bỏ trống và bấm gửi: hiển thị **MSG-001** và đổi viền khung đỏ.<br>- Username đã tồn tại: hiển thị **MSG-002**. |
-| 4 | Trường thông tin password | Text | Yes | Yes | N/A | - Mật khẩu bắt buộc nhập, ẩn ký tự dạng `*`.<br>- Tối thiểu 8 ký tự.<br>- Nhấn giữ biểu tượng con mắt để xem mật khẩu.<br>- Bỏ trống: hiển thị **MSG-001**.<br>- Dưới 8 ký tự: hiển thị **MSG-003**. |
-| 5 | Trường nhập lại mật khẩu | Text | Yes | Yes | N/A | - Phải trùng khớp 100% với mật khẩu đã nhập.<br>- Bỏ trống: hiển thị **MSG-001**.<br>- Không trùng khớp: hiển thị **MSG-003** và viền đỏ. |
-| 6 | Button đăng ký | Button | N/A | N/A | N/A | Gửi thông tin đăng ký tài khoản. Đăng ký thành công điều hướng về trang chủ với trạng thái đăng nhập. |
-| 7 | Button đăng ký Google | Button | N/A | N/A | N/A | Chuyển hướng tới đăng ký bằng tài khoản Google. |
-| 8 | Button đăng ký Facebook | Button | N/A | N/A | N/A | Chuyển hướng tới đăng ký bằng tài khoản Facebook. |
-| 9 | Link đăng nhập | Link | N/A | N/A | N/A | Điều hướng sang trang Đăng nhập nếu đã có tài khoản. |
-
-Giữ nguyên các nút điều hướng/Google/Facebook của module hiện hữu; không bổ sung chính sách Authentication mới.
-
-#### G. Related Business Rules
+**Quy tắc nghiệp vụ liên quan**
 
 N/A — quy tắc đăng ký giữ từ v2.1.
 
-#### H. Dependencies
+**Phụ thuộc — DEP**
 
 Module Authentication hiện hữu; các nút Google/Facebook và link đăng nhập dùng luồng hiện hữu.
 
-### 8.2. US-CRS-002 – Xem thông tin khóa học và quyền học thử
+#### 3.2.2. User class 2 — Học viên
 
-#### A. General Information
+##### 3.2.2.1. US-CRS-002 — Xem thông tin khóa học và quyền học thử
+
+**Thông tin chức năng — ID / TITLE**
 
 | Thuộc tính | Giá trị |
 | --- | --- |
@@ -276,21 +295,21 @@ Module Authentication hiện hữu; các nút Google/Facebook và link đăng nh
 | Priority | P0 |
 | User Role | học viên đã đăng nhập |
 
-#### B. User Story Statement
+**Mô tả và giá trị — DESC / RAT**
 
 **As a** học viên đã đăng nhập  
 **I want to** xem thông tin khóa học và quyền học thử tương ứng trạng thái của tôi  
 **So that** tôi có đủ thông tin để chọn học thử hoặc mua khóa học.
 
-#### C. Business Context
+**Bối cảnh — RAT**
 
 Giữ thông tin đề cương, giảng viên, đánh giá, trailer và accordion; CTA phụ thuộc quyền sở hữu và lịch sử trial.
 
-#### D. Preconditions
+**Điều kiện tiên quyết / Input**
 
 Khóa học được truy cập qua trang chi tiết; trạng thái của đúng học viên và khóa học được kiểm tra.
 
-#### E. Acceptance Criteria
+**Scenario — xử lý và Output**
 
 **AC1: Thông tin và quyền học thử — Happy Path**
 
@@ -322,33 +341,17 @@ Khóa học được truy cập qua trang chi tiết; trạng thái của đúng
 - **When** mở lại hoặc đăng nhập lại.
 - **Then** không cho kích hoạt lại; giải thích bằng MSG-014 và cho phép thanh toán mua một lần.
 
-#### F. UI Component Specification
-
-![US-CRS-002_ Chi tiết khóa học (Huy hiệu Học thử 50% & CTA Trải nghiệm 7 ngày)](./H%E1%BB%8Dc%20th%E1%BB%AD%20screen./US-CRS-002_%20Chi%20ti%E1%BA%BFt%20kh%C3%B3a%20h%E1%BB%8Dc%20(Huy%20hi%E1%BB%87u%20H%E1%BB%8Dc%20th%E1%BB%AD%2050%25%20&%20CTA%20Tr%E1%BA%A3i%20nghi%E1%BB%87m%207%20ng%C3%A0y).png)
-
-**UI Update Required:** Giữ ảnh; bổ sung CTA theo trạng thái và thông tin 168 giờ. Giá 399.000đ trong ảnh là dữ liệu minh họa, không phải giá cố định của mọi khóa học.
-
-| STT | Tên thành phần | Type | Được chỉnh sửa | Bắt buộc | Giá trị mặc định | Mô tả |
-| --- | --- | --- | --- | --- | --- | --- |
-| 1 | Card thông tin khóa học | Card | No | N/A | Theo khóa học | Tên khóa, đơn vị phát hành, rating, số học viên, cấp độ; giữ khối giảng viên và đánh giá. |
-| 2 | Video trailer giới thiệu | Media | No | N/A | Chưa phát | Giới thiệu tổng quan; không thay thế kiểm tra quyền video bài học. |
-| 3 | Trải nghiệm 7 ngày / Tiếp tục học thử / Vào học | Button | No | N/A | Theo trạng thái | Điều hướng US-ENR-003, US-PLAY-005 hoặc nội dung đã mua; không cho trial lặp lại. |
-| 4 | Mua ngay | Button | No | N/A | Giá hiện hành | Mua một lần; không hiển thị cho người đã sở hữu. |
-| 5 | Huy hiệu Học thử 50% | Badge | No | N/A | Bài 1–3 | Giới hạn video của từng bài; không thể hiện quyền đã mua. |
-| 6 | Biểu tượng Khóa | Icon | No | N/A | Theo quyền | Các bài từ 4 và bài tập/quiz/tài liệu bảo vệ khóa với trial; sau hết hạn khóa cả 3 bài đầu nếu chưa mua. |
-| 7 | Accordion bài học | Accordion | Yes | No | Thu gọn | Xem tóm tắt nội dung, không mở tài nguyên được bảo vệ. |
-
-#### G. Related Business Rules
+**Quy tắc nghiệp vụ liên quan**
 
 BR-001, BR-003, BR-005, BR-010, BR-014
 
-#### H. Dependencies
+**Phụ thuộc — DEP**
 
 US-AUTH-001; US-ENR-003; US-TRIAL-007; US-ACCESS-011; checkout mua một lần hiện hữu.
 
-### 8.3. US-ENR-003 – Xem và xác nhận điều kiện học thử
+##### 3.2.2.2. US-ENR-003 — Xem và xác nhận điều kiện học thử
 
-#### A. General Information
+**Thông tin chức năng — ID / TITLE**
 
 | Thuộc tính | Giá trị |
 | --- | --- |
@@ -358,21 +361,21 @@ US-AUTH-001; US-ENR-003; US-TRIAL-007; US-ACCESS-011; checkout mua một lần h
 | Priority | P1 |
 | User Role | học viên đủ điều kiện học thử khóa học |
 
-#### B. User Story Statement
+**Mô tả và giá trị — DESC / RAT**
 
 **As a** học viên đủ điều kiện học thử khóa học  
 **I want to** xem và chủ động đồng ý các điều kiện học thử cùng khoản mua một lần sau trial  
 **So that** tôi hiểu quyền truy cập và khoản thanh toán trước khi liên kết phương thức.
 
-#### C. Business Context
+**Bối cảnh — RAT**
 
 Consent phải thể hiện đúng khóa học, giá, thời điểm thu tiền và quyền hủy. Không coi thao tác xem modal là đồng ý.
 
-#### D. Preconditions
+**Điều kiện tiên quyết / Input**
 
 Đã đăng nhập, chưa sở hữu, chưa từng kích hoạt trial cho khóa học.
 
-#### E. Acceptance Criteria
+**Scenario — xử lý và Output**
 
 **AC1: Hiển thị điều kiện — Happy Path**
 
@@ -404,30 +407,17 @@ Consent phải thể hiện đúng khóa học, giá, thời điểm thu tiền 
 - **When** gửi xác nhận.
 - **Then** kiểm tra lại và từ chối trial với MSG-014 hoặc MSG-004; không tạo lịch thanh toán.
 
-#### F. UI Component Specification
-
-![US-ENR-003_ Modal cam kết trải nghiệm học thử 7 ngày](./H%E1%BB%8Dc%20th%E1%BB%AD%20screen./US-ENR-003_%20Modal%20cam%20k%E1%BA%BFt%20tr%E1%BA%A3i%20nghi%E1%BB%87m%20h%E1%BB%8Dc%20th%E1%BB%AD%207%20ng%C3%A0y.png)
-
-**UI Update Required:** Modal hiện tại ghi “$20 USD mỗi tháng”, quyền mọi khóa/chứng chỉ và “Hủy bất cứ lúc nào”. Thay bằng quyền của một khóa, giá mua một lần, lịch thu chính xác và quyền hủy trước hết hạn; không kế thừa cam kết chứng chỉ trong ảnh.
-
-| STT | Tên thành phần | Type | Được chỉnh sửa | Bắt buộc | Giá trị mặc định | Mô tả |
-| --- | --- | --- | --- | --- | --- | --- |
-| 1 | Trải nghiệm 7 ngày | Button | No | N/A | Theo đủ điều kiện | Mở modal điều kiện. |
-| 2 | Modal điều kiện học thử | Modal | No | Yes | Chưa mở | Hiển thị đầy đủ thời hạn, nội dung, giá một lần, thời điểm và múi giờ thanh toán, cách hủy và quyền còn lại. |
-| 3 | Đồng ý thanh toán một lần sau học thử | Checkbox | Yes | Yes | Chưa chọn | Đồng ý rõ ràng, liên kết đúng phiên bản điều kiện; không chọn sẵn. |
-| 4 | Bắt đầu dùng thử miễn phí | Button | No | N/A | Chưa cho tiếp tục | Chỉ chuyển sang liên kết phương thức khi consent hợp lệ; bản thân nút không kích hoạt trial. |
-
-#### G. Related Business Rules
+**Quy tắc nghiệp vụ liên quan**
 
 BR-001, BR-002, BR-003, BR-006, BR-007, BR-013
 
-#### H. Dependencies
+**Phụ thuộc — DEP**
 
 US-CRS-002; US-PAY-004; US-PAY-008.
 
-### 8.4. US-PAY-004 – Liên kết phương thức thanh toán và kích hoạt học thử
+##### 3.2.2.3. US-PAY-004 — Liên kết phương thức thanh toán và kích hoạt học thử
 
-#### A. General Information
+**Thông tin chức năng — ID / TITLE**
 
 | Thuộc tính | Giá trị |
 | --- | --- |
@@ -437,21 +427,21 @@ US-CRS-002; US-PAY-004; US-PAY-008.
 | Priority | P0 |
 | User Role | học viên đã đồng ý điều kiện học thử |
 
-#### B. User Story Statement
+**Mô tả và giá trị — DESC / RAT**
 
 **As a** học viên đã đồng ý điều kiện học thử  
 **I want to** liên kết phương thức thanh toán được hỗ trợ và kích hoạt trial  
 **So that** tôi bắt đầu trải nghiệm với lịch mua một lần đã được ủy quyền.
 
-#### C. Business Context
+**Bối cảnh — RAT**
 
 Gateway xác thực và lưu token/phương thức tham chiếu; không tạo subscription. Chỉ kích hoạt sau khi đủ điều kiện và consent hợp lệ.
 
-#### D. Preconditions
+**Điều kiện tiên quyết / Input**
 
 Đã đăng nhập, chưa sở hữu/chưa dùng trial; đã xem điều kiện US-ENR-003.
 
-#### E. Acceptance Criteria
+**Scenario — xử lý và Output**
 
 **AC1: Kích hoạt thành công — Happy Path**
 
@@ -495,38 +485,17 @@ Gateway xác thực và lưu token/phương thức tham chiếu; không tạo su
 - **When** hoàn tất liên kết.
 - **Then** không kích hoạt với consent cũ hoặc tạo mua trùng; yêu cầu xác nhận mới theo US-ENR-003 hoặc hiển thị MSG-004.
 
-#### F. UI Component Specification
-
-![US-PAY-004_ Liên kết thẻ thanh toán quốc tế & Kích hoạt học thử 7 ngày](./H%E1%BB%8Dc%20th%E1%BB%AD%20screen./US-PAY-004_%20Li%C3%AAn%20k%E1%BA%BFt%20th%E1%BA%BB%20thanh%20to%C3%A1n%20qu%E1%BB%91c%20t%E1%BA%BF%20&%20K%C3%ADch%20ho%E1%BA%A1t%20h%E1%BB%8Dc%20th%E1%BB%AD%207%20ng%C3%A0y.png)
-
-![US-PAY-004_ Điền thẻ thanh toán (Lỗi validation AC2 MSG-001 & AC3 MSG-003)](./H%E1%BB%8Dc%20th%E1%BB%AD%20screen./US-PAY-004_%20%C4%90i%E1%BB%81n%20th%E1%BA%BB%20thanh%20to%C3%A1n%20(L%E1%BB%97i%20validation%20AC2%20MSG-001%20&%20AC3%20MSG-003).png)
-
-![US-PAY-004_ Điền thẻ thanh toán (Lỗi thẻ bị từ chối AC4 Gateway Decline)](./H%E1%BB%8Dc%20th%E1%BB%AD%20screen./US-PAY-004_%20%C4%90i%E1%BB%81n%20th%E1%BA%BB%20thanh%20to%C3%A1n%20(L%E1%BB%97i%20th%E1%BA%BB%20b%E1%BB%8B%20t%E1%BB%AB%20ch%E1%BB%91i%20AC4%20Gateway%20Decline).png)
-
-**UI Update Required:** Giữ 3 ảnh form/kết quả lỗi; cập nhật consent và lịch mua một lần, thống nhất giá theo khóa. Không coi hình logo Visa/Mastercard, xác thực 0đ hoặc mẫu CVV là danh sách phương thức/quy tắc gateway đã được chốt.
-
-| STT | Tên thành phần | Type | Được chỉnh sửa | Bắt buộc | Giá trị mặc định | Mô tả |
-| --- | --- | --- | --- | --- | --- | --- |
-| 1 | Họ và tên trên thẻ | Text / gateway-hosted | Yes | Theo phương thức | Trống | Giữ trường nếu gateway yêu cầu; tên theo quy tắc gateway, không mặc định cấm mọi ký tự đặc biệt. MSG-001/MSG-003. |
-| 2 | Email | Text | Yes | Yes với form hiện hữu | Trống | Email nhận xác nhận trial và biên lai mua một lần; kiểm tra cú pháp, MSG-001/MSG-003. |
-| 3 | Quốc gia | List / gateway-hosted | Yes | Theo phương thức | Chưa chọn | Quốc gia theo yêu cầu nhà cung cấp, không mặc định mọi phương thức đều cần. |
-| 4 | Số thẻ | Gateway-hosted field | Yes | Theo phương thức thẻ | Trống | Do gateway thu nhận và kiểm tra định dạng/Luhn khi áp dụng; không lưu số thẻ đầy đủ trực tiếp tại ANSERA. |
-| 5 | Ngày hết hạn | Gateway-hosted field | Yes | Theo phương thức thẻ | MM/YY nếu hỗ trợ | Kiểm tra định dạng và hiệu lực theo gateway; MSG-001/MSG-003. |
-| 6 | Mã bảo vệ (CVV) | Gateway-hosted field | Yes | Theo gateway | Trống | Độ dài theo loại thẻ/gateway; không mặc định luôn 3 chữ số; không yêu cầu ANSERA lưu CVV. |
-| 7 | Kích hoạt học thử 7 ngày | Button | No | N/A | Chưa gửi | Liên kết an toàn, kiểm tra consent cuối cùng, kích hoạt và lập lịch một lần; không suy ra thành công từ việc gửi yêu cầu. |
-| 8 | Tóm tắt giá và lịch thu tiền | Summary | No | Yes | Theo điều kiện đã đồng ý | Hiển thị giá, tiền tệ, giờ và múi giờ chính xác; nếu thay đổi phải xác nhận lại trước kích hoạt. |
-
-#### G. Related Business Rules
+**Quy tắc nghiệp vụ liên quan**
 
 BR-001, BR-002, BR-005, BR-006, BR-012, BR-013
 
-#### H. Dependencies
+**Phụ thuộc — DEP**
 
 US-ENR-003; gateway được chọn; US-PLAY-005; US-PAY-009.
 
-### 8.5. US-PLAY-005 – Trải nghiệm nội dung học thử có giới hạn
+##### 3.2.2.4. US-PLAY-005 — Trải nghiệm nội dung học thử có giới hạn
 
-#### A. General Information
+**Thông tin chức năng — ID / TITLE**
 
 | Thuộc tính | Giá trị |
 | --- | --- |
@@ -536,21 +505,21 @@ US-ENR-003; gateway được chọn; US-PLAY-005; US-PAY-009.
 | Priority | P0 |
 | User Role | học viên đang có trial còn hiệu lực |
 
-#### B. User Story Statement
+**Mô tả và giá trị — DESC / RAT**
 
 **As a** học viên đang có trial còn hiệu lực  
 **I want to** xem và xem lại phần video được cho phép cùng Paywall tại giới hạn  
 **So that** tôi đánh giá chất lượng giảng dạy trước khi mua khóa học.
 
-#### C. Business Context
+**Bối cảnh — RAT**
 
 Giữ Seek Guard, Paywall và replay hiện hữu; quyền phải được kiểm tra khi cấp dữ liệu media, không chỉ che giao diện.
 
-#### D. Preconditions
+**Điều kiện tiên quyết / Input**
 
 TRIAL_ACTIVE, chưa PAID_ACTIVE và thời gian máy chủ nhỏ hơn trial_expires_at.
 
-#### E. Acceptance Criteria
+**Scenario — xử lý và Output**
 
 **AC1: Dừng đúng giới hạn — Happy Path**
 
@@ -588,34 +557,17 @@ TRIAL_ACTIVE, chưa PAID_ACTIVE và thời gian máy chủ nhỏ hơn trial_expi
 - **When** thanh toán được gateway xác nhận thành công và quyền được cập nhật.
 - **Then** bỏ giới hạn 50% và mở toàn bộ nội dung theo US-ACCESS-011; giữ tiến trình đã có.
 
-#### F. UI Component Specification
-
-![US-PLAY-005_ Trình phát video học thử 50% & Chặn tua (Seek Guard)](./H%E1%BB%8Dc%20th%E1%BB%AD%20screen./US-PLAY-005_%20Tr%C3%ACnh%20ph%C3%A1t%20video%20h%E1%BB%8Dc%20th%E1%BB%AD%2050%25%20&%20Ch%E1%BA%B7n%20tua%20(Seek%20Guard).png)
-
-![US-PLAY-005_ Lớp phủ Paywall Modal khi chạm mốc 50% (MSG-005)](./H%E1%BB%8Dc%20th%E1%BB%AD%20screen./US-PLAY-005_%20L%E1%BB%9Bp%20ph%E1%BB%A7%20Paywall%20Modal%20khi%20ch%E1%BA%A1m%20m%E1%BB%91c%2050%25%20(MSG-005).png)
-
-**UI Update Required:** Giữ 2 ảnh player/Paywall; thay lời nhắc lịch thu tiền, bổ sung trạng thái đã hủy. Giá/giảm giá, hoàn tiền 7 ngày, chứng chỉ, sở hữu trọn đời và cập nhật miễn phí trong ảnh chưa được BD xác nhận; không dùng làm yêu cầu mặc định.
-
-| STT | Tên thành phần | Type | Được chỉnh sửa | Bắt buộc | Giá trị mặc định | Mô tả |
-| --- | --- | --- | --- | --- | --- | --- |
-| 1 | Khung trình phát video | Video | Yes | N/A | Chưa phát | Phát trong quyền hiện tại; không coi player là lớp kiểm soát duy nhất. |
-| 2 | Thanh tua Seek-bar | Slider | Yes | No | 00:00 | Phân biệt 50% đầu được phép và phần sau bị khóa; không phát/tải vượt giới hạn. |
-| 3 | Banner đếm ngược | Banner | No | N/A | Theo máy chủ | Thời gian còn lại và lịch mua một lần/trạng thái đã hủy theo US-TRIAL-007. |
-| 4 | Paywall Modal Overlay | Modal | No | N/A | Đóng | Xuất hiện ở giới hạn 50% hoặc nội dung khóa; phân biệt MSG-005 và MSG-017. |
-| 5 | Mở khóa toàn bộ khóa học | Button | No | N/A | Giá hiện tại | Dẫn tới xác nhận mua một lần US-PAY-010, không tự cấp quyền. |
-| 6 | Xem lại đoạn học thử | Button | No | N/A | Theo trial | Chỉ cho replay khi còn hạn; hết hạn không cho xem lại. |
-
-#### G. Related Business Rules
+**Quy tắc nghiệp vụ liên quan**
 
 BR-002, BR-003, BR-004, BR-007, BR-010, BR-012
 
-#### H. Dependencies
+**Phụ thuộc — DEP**
 
 US-PAY-004; US-TRIAL-007; US-PAY-010; US-EXP-006; US-ACCESS-011; backend/media delivery.
 
-### 8.6. US-TRIAL-007 – Xem trạng thái và thời gian học thử
+##### 3.2.2.5. US-TRIAL-007 — Xem trạng thái và thời gian học thử
 
-#### A. General Information
+**Thông tin chức năng — ID / TITLE**
 
 | Thuộc tính | Giá trị |
 | --- | --- |
@@ -625,21 +577,21 @@ US-PAY-004; US-TRIAL-007; US-PAY-010; US-EXP-006; US-ACCESS-011; backend/media d
 | Priority | P1 |
 | User Role | học viên đã kích hoạt trial |
 
-#### B. User Story Statement
+**Mô tả và giá trị — DESC / RAT**
 
 **As a** học viên đã kích hoạt trial  
 **I want to** xem thời gian còn lại, hạn và trạng thái khoản mua tự động  
 **So that** tôi chủ động quyết định hủy thanh toán hoặc mua khóa học.
 
-#### C. Business Context
+**Bối cảnh — RAT**
 
 Một nguồn trạng thái thống nhất cho trang khóa học và player; không suy ra quyền từ đồng hồ phía trình duyệt.
 
-#### D. Preconditions
+**Điều kiện tiên quyết / Input**
 
 Đã đăng nhập, đang xem đúng khóa học có lịch sử trial.
 
-#### E. Acceptance Criteria
+**Scenario — xử lý và Output**
 
 **AC1: Xem thông tin — Happy Path**
 
@@ -671,27 +623,17 @@ Một nguồn trạng thái thống nhất cho trang khóa học và player; kh�
 - **When** yêu cầu dữ liệu trial/thanh toán của học viên B.
 - **Then** backend từ chối và không tiết lộ số tiền, phương thức hoặc lịch của B.
 
-#### F. UI Component Specification
-
-| STT | Tên thành phần | Type | Được chỉnh sửa | Bắt buộc | Giá trị mặc định | Mô tả |
-| --- | --- | --- | --- | --- | --- | --- |
-| 1 | Trạng thái học thử và quyền sở hữu | Status | No | N/A | Theo backend | Tách trial_status, automatic_payment_status, course_access. |
-| 2 | Thời gian còn lại / Hết hạn lúc | Countdown / Text | No | N/A | Theo máy chủ | Hiển thị giờ/ngày và múi giờ; không thể gia hạn bằng sửa đồng hồ máy. |
-| 3 | Giá mua một lần / lịch thanh toán | Summary | No | N/A | Theo consent | Thể hiện rõ đã hủy, hoàn tất, thất bại hoặc đang xử lý; lịch cũ chỉ là lịch sử khi đã hủy. |
-| 4 | Hủy thanh toán tự động sau học thử | Button | No | N/A | Theo điều kiện US-PAY-008 | Chỉ cho hủy lịch còn đủ điều kiện. |
-| 5 | Mua khóa học / Vào học | Button | No | N/A | Theo quyền | CTA mua chịu kiểm tra giao dịch đang xử lý, không tạo thu trùng. |
-
-#### G. Related Business Rules
+**Quy tắc nghiệp vụ liên quan**
 
 BR-002, BR-004, BR-006, BR-007, BR-008, BR-009, BR-010
 
-#### H. Dependencies
+**Phụ thuộc — DEP**
 
 US-PAY-004; US-PAY-008; US-PAY-009; US-PAY-010; US-EXP-006; US-ACCESS-011.
 
-### 8.7. US-PAY-008 – Hủy thanh toán tự động sau học thử
+##### 3.2.2.6. US-PAY-008 — Hủy thanh toán tự động sau học thử
 
-#### A. General Information
+**Thông tin chức năng — ID / TITLE**
 
 | Thuộc tính | Giá trị |
 | --- | --- |
@@ -701,21 +643,21 @@ US-PAY-004; US-PAY-008; US-PAY-009; US-PAY-010; US-EXP-006; US-ACCESS-011.
 | Priority | P0 |
 | User Role | học viên đang học thử có lịch thanh toán tự động |
 
-#### B. User Story Statement
+**Mô tả và giá trị — DESC / RAT**
 
 **As a** học viên đang học thử có lịch thanh toán tự động  
 **I want to** hủy khoản mua tự động trước khi trial hết hạn  
 **So that** tôi tránh khoản thu đã lên lịch và vẫn sử dụng phần trial còn lại.
 
-#### C. Business Context
+**Bối cảnh — RAT**
 
 Hủy lịch thu tiền, không hủy trial. Phải phân biệt xác nhận hủy thành công với yêu cầu hủy đang xử lý.
 
-#### D. Preconditions
+**Điều kiện tiên quyết / Input**
 
 Đã đăng nhập, TRIAL_ACTIVE, chưa sở hữu, lịch SCHEDULED, thời gian máy chủ trước expiry.
 
-#### E. Acceptance Criteria
+**Scenario — xử lý và Output**
 
 **AC1: Hủy ngày 2 — Happy Path**
 
@@ -753,26 +695,17 @@ Hủy lịch thu tiền, không hủy trial. Phải phân biệt xác nhận h�
 - **When** hệ thống chưa thể xác nhận vô hiệu hóa lịch thu.
 - **Then** hiển thị MSG-018; không hiển thị MSG-008 hoặc giả định không thu, giữ trạng thái đã xác minh và cho kiểm tra lại.
 
-#### F. UI Component Specification
-
-| STT | Tên thành phần | Type | Được chỉnh sửa | Bắt buộc | Giá trị mặc định | Mô tả |
-| --- | --- | --- | --- | --- | --- | --- |
-| 1 | Hủy thanh toán tự động sau học thử | Button | No | N/A | Theo SCHEDULED/còn hạn | Mở xác nhận; không đặt tên Hủy gia hạn. |
-| 2 | Xác nhận hủy | Dialog | No | N/A | Chưa xác nhận | Nêu sẽ không tự mua; trial vẫn dùng tới hạn ban đầu. |
-| 3 | Kết quả hủy | Status / Message | No | N/A | Theo kết quả backend | MSG-008 chỉ sau hủy thành công; MSG-013/MSG-018 cho trường hợp chưa thể hủy. |
-| 4 | Mua khóa học | Button | No | N/A | Theo quyền | Vẫn mua chủ động được sau hủy; kiểm tra thanh toán đang xử lý. |
-
-#### G. Related Business Rules
+**Quy tắc nghiệp vụ liên quan**
 
 BR-002, BR-004, BR-007, BR-011, BR-014
 
-#### H. Dependencies
+**Phụ thuộc — DEP**
 
 US-TRIAL-007; US-PAY-009; US-PAY-010; gateway/lịch thanh toán.
 
-### 8.8. US-PAY-009 – Tự động mua khóa học khi kết thúc thời hạn học thử
+##### 3.2.2.7. US-PAY-009 — Tự động mua khóa học khi kết thúc thời hạn học thử
 
-#### A. General Information
+**Thông tin chức năng — ID / TITLE**
 
 | Thuộc tính | Giá trị |
 | --- | --- |
@@ -782,21 +715,21 @@ US-TRIAL-007; US-PAY-009; US-PAY-010; gateway/lịch thanh toán.
 | Priority | P0 |
 | User Role | học viên đã ủy quyền mua tự động sau trial |
 
-#### B. User Story Statement
+**Mô tả và giá trị — DESC / RAT**
 
 **As a** học viên đã ủy quyền mua tự động sau trial  
 **I want to** hệ thống thực hiện khoản mua một lần khi trial hết hạn nếu tôi vẫn đủ điều kiện  
 **So that** tôi có toàn bộ khóa học sau khi thanh toán được xác nhận thành công.
 
-#### C. Business Context
+**Bối cảnh — RAT**
 
 Tách tác vụ cuối kỳ khỏi US-PAY-004; mỗi lịch chỉ thực hiện một khoản mua, không có gia hạn định kỳ hoặc lịch tự retry MVP.
 
-#### D. Preconditions
+**Điều kiện tiên quyết / Input**
 
 Thời gian máy chủ đạt/vượt expiry; trial đã được kích hoạt; tác vụ chỉ được thu nếu chưa sở hữu, chưa hủy và phương thức/ủy quyền còn hợp lệ.
 
-#### E. Acceptance Criteria
+**Scenario — xử lý và Output**
 
 **AC1: Thanh toán tự động thành công — Happy Path**
 
@@ -852,21 +785,17 @@ Thời gian máy chủ đạt/vượt expiry; trial đã được kích hoạt; 
 - **When** xử lý thông báo.
 - **Then** không đánh dấu hoàn tất, không cấp quyền; ghi nhận để đối soát, tiếp tục dựa trên kết quả đã xác minh.
 
-#### F. UI Component Specification
-
-N/A — tác vụ tự động, không tạo màn hình riêng. Kết quả dùng trang trạng thái US-TRIAL-007, trang khóa học và thông báo MSG-010/MSG-011/MSG-012.
-
-#### G. Related Business Rules
+**Quy tắc nghiệp vụ liên quan**
 
 BR-004, BR-005, BR-006, BR-008, BR-009, BR-010, BR-011, BR-013
 
-#### H. Dependencies
+**Phụ thuộc — DEP**
 
 US-PAY-004; US-PAY-008; US-PAY-010; US-EXP-006; US-ACCESS-011; gateway.
 
-### 8.9. US-PAY-010 – Thanh toán mở khóa khóa học trước thời hạn
+##### 3.2.2.8. US-PAY-010 — Thanh toán mở khóa khóa học trước thời hạn
 
-#### A. General Information
+**Thông tin chức năng — ID / TITLE**
 
 | Thuộc tính | Giá trị |
 | --- | --- |
@@ -876,21 +805,21 @@ US-PAY-004; US-PAY-008; US-PAY-010; US-EXP-006; US-ACCESS-011; gateway.
 | Priority | P0 |
 | User Role | học viên đang có trial còn hiệu lực và chưa sở hữu khóa học |
 
-#### B. User Story Statement
+**Mô tả và giá trị — DESC / RAT**
 
 **As a** học viên đang có trial còn hiệu lực và chưa sở hữu khóa học  
 **I want to** chủ động thanh toán mua khóa học ngay  
 **So that** tôi học toàn bộ nội dung mà không phải đợi hết trial.
 
-#### C. Business Context
+**Bối cảnh — RAT**
 
 Mua một lần kể cả đã hủy lịch; khi thanh toán thất bại, chỉ giữ trial trong phần thời gian còn lại ban đầu.
 
-#### D. Preconditions
+**Điều kiện tiên quyết / Input**
 
 Đã đăng nhập, chưa sở hữu, trial còn hạn tại lúc bắt đầu; không có giao dịch mua khác chưa rõ kết quả.
 
-#### E. Acceptance Criteria
+**Scenario — xử lý và Output**
 
 **AC1: Mua sớm thành công — Happy Path**
 
@@ -928,111 +857,17 @@ Mua một lần kể cả đã hủy lịch; khi thanh toán thất bại, chỉ
 - **When** gửi yêu cầu mua.
 - **Then** không thực hiện khoản thu chưa được xác nhận; người đã sở hữu nhận MSG-004 và Vào học.
 
-#### F. UI Component Specification
-
-| STT | Tên thành phần | Type | Được chỉnh sửa | Bắt buộc | Giá trị mặc định | Mô tả |
-| --- | --- | --- | --- | --- | --- | --- |
-| 1 | Giá mua khóa học | Summary | No | Yes | Giá khóa học hiện hành | Hiển thị số tiền, tiền tệ và mua một lần; thay đổi giá phải xác nhận lại, không tự suy ra bằng giá lịch tự động. |
-| 2 | Xác nhận thanh toán | Button | No | N/A | Chưa gửi | Chỉ gửi sau đồng ý giá; khi đang xử lý không tạo giao dịch mới. |
-| 3 | Phương thức thanh toán | Gateway component | Yes | Yes | Theo lựa chọn hợp lệ | Thu nhận an toàn qua gateway; không yêu cầu lưu dữ liệu thẻ nhạy cảm ở ANSERA. |
-| 4 | Kết quả mua | Status / Message | No | N/A | Theo gateway | MSG-009/MSG-019/MSG-012/MSG-004; mua thất bại vẫn thể hiện trial còn lại nếu còn hạn. |
-
-#### G. Related Business Rules
+**Quy tắc nghiệp vụ liên quan**
 
 BR-004, BR-005, BR-008, BR-010, BR-011, BR-013, BR-014
 
-#### H. Dependencies
+**Phụ thuộc — DEP**
 
 US-PLAY-005; US-TRIAL-007; US-PAY-008; US-PAY-009; US-ACCESS-011; checkout một lần hiện hữu.
 
-### 8.10. US-EXP-006 – Tự động hết hạn học thử và thu hồi quyền truy cập
+##### 3.2.2.9. US-ACCESS-011 — Cấp quyền truy cập đầy đủ sau khi mua khóa học thành công
 
-#### A. General Information
-
-| Thuộc tính | Giá trị |
-| --- | --- |
-| User Story ID | US-EXP-006 |
-| User Story Name | Tự động hết hạn học thử và thu hồi quyền truy cập |
-| Epic | Access Management |
-| Priority | P0 |
-| User Role | quản trị viên vận hành nền tảng ANSERA |
-
-#### B. User Story Statement
-
-**As a** quản trị viên vận hành nền tảng ANSERA  
-**I want to** hệ thống thu hồi toàn bộ quyền trial đúng hạn nếu học viên chưa mua thành công  
-**So that** tôi bảo vệ nội dung khóa học và thực thi đúng thời hạn đã công bố.
-
-#### C. Business Context
-
-Thu hồi tại đủ 168 giờ độc lập với độ trễ scheduler/gateway; hủy lịch không làm hết trial sớm.
-
-#### D. Preconditions
-
-Trial đã kích hoạt; hệ thống có start/expiry và quyền sở hữu đã xác minh.
-
-#### E. Acceptance Criteria
-
-**AC1: Hết hạn chính xác — Happy Path**
-
-- **Given** trial còn hoạt động và chưa PAID_ACTIVE.
-- **When** thời gian máy chủ đạt trial_expires_at.
-- **Then** trial thành TRIAL_EXPIRED và course_access = NOT_OWNED; chặn toàn bộ nội dung trial kể cả 50% đầu của Bài 1–3, không đợi retry hoặc kết quả tự mua.
-
-**AC2: Đã hủy thanh toán — Alternative Flow**
-
-- **Given** lịch CANCELED từ ngày 2.
-- **When** trước hạn rồi tới đúng expiry ban đầu.
-- **Then** giữ quyền trial trước hạn; tại hạn thu hồi toàn bộ nếu chưa mua, không gửi khoản tự thu.
-
-**AC3: Thanh toán lỗi hoặc đang xử lý — Negative Path**
-
-- **Given** đã tới expiry và chưa có thành công xác minh.
-- **When** gateway trả thất bại hoặc còn chờ.
-- **Then** không cấp paid/grace access; hiển thị MSG-011 hoặc MSG-012 đúng kết quả, không kéo dài trial.
-
-**AC4: Truy cập lại — Negative Path**
-
-- **Given** trial đã hết hạn, chưa sở hữu.
-- **When** mở bất cứ bài/tài nguyên được bảo vệ, tải lại, đăng nhập lại hoặc dùng URL media cũ.
-- **Then** backend/media từ chối truy cập; giao diện hiển thị MSG-006 và đường thanh toán chủ động; không mở trial lần hai.
-
-**AC5: Đã sở hữu — Edge Case**
-
-- **Given** đã PAID_ACTIVE.
-- **When** tác vụ hết hạn cũ chạy.
-- **Then** không hạ quyền đã mua hoặc đổi CONVERTED về TRIAL_EXPIRED; giữ quyền đầy đủ.
-
-**AC6: Tác vụ chậm/đồng hồ máy sai — Boundary**
-
-- **Given** scheduler chưa cập nhật hàng dữ liệu hoặc máy học viên chỉnh giờ.
-- **When** yêu cầu nội dung tại/sau expiry.
-- **Then** backend dùng thời gian máy chủ và ownership để từ chối ngay nếu chưa mua; không dựa vào banner hoặc thời gian máy học viên để giữ quyền.
-
-#### F. UI Component Specification
-
-![US-EXP-006_ Chi tiết khóa học khi Hết hạn học thử 7 ngày (MSG-006 & Khóa toàn bộ 🔒)](./H%E1%BB%8Dc%20th%E1%BB%AD%20screen./US-EXP-006_%20Chi%20ti%E1%BA%BFt%20kh%C3%B3a%20h%E1%BB%8Dc%20khi%20H%E1%BA%BFt%20h%E1%BA%A1n%20h%E1%BB%8Dc%20th%E1%BB%AD%207%20ng%C3%A0y%20(MSG-006%20&%20Kh%C3%B3a%20to%C3%A0n%20b%E1%BB%99%20%F0%9F%94%92).png)
-
-**UI Update Required:** Giữ ảnh hết hạn; giá 399.000đ là minh họa. Phân biệt hết hạn với thanh toán thất bại/đang xử lý; không dùng CTA mua mới để tạo thu trùng khi giao dịch trước chưa rõ kết quả.
-
-| STT | Tên thành phần | Type | Được chỉnh sửa | Bắt buộc | Giá trị mặc định | Mô tả |
-| --- | --- | --- | --- | --- | --- | --- |
-| 1 | Banner hết hạn | Banner | No | N/A | Theo backend | MSG-006; kết quả thanh toán thể hiện riêng, không gọi hết trial là hủy trial. |
-| 2 | Khóa toàn bộ bài/tài liệu bảo vệ | Icon | No | N/A | Khóa nếu chưa mua | Bao gồm Bài 1–3, ngăn URL trực tiếp. |
-| 3 | Thanh toán để tiếp tục học | Button | No | N/A | Giá khóa học | Dẫn checkout một lần hiện hữu; nếu giao dịch chưa rõ kết quả, kiểm tra giao dịch trước khi mở khoản thu mới. |
-| 4 | Đã sử dụng quyền học thử | Button / Note | No | N/A | Không cho kích hoạt lại | MSG-014; lịch sử đã dùng không bị xóa khi đăng nhập lại. |
-
-#### G. Related Business Rules
-
-BR-001, BR-002, BR-003, BR-004, BR-007, BR-009, BR-010, BR-012
-
-#### H. Dependencies
-
-US-PAY-004; US-PAY-008; US-PAY-009; US-PAY-010; US-ACCESS-011; backend/media delivery.
-
-### 8.11. US-ACCESS-011 – Cấp quyền truy cập đầy đủ sau khi mua khóa học thành công
-
-#### A. General Information
+**Thông tin chức năng — ID / TITLE**
 
 | Thuộc tính | Giá trị |
 | --- | --- |
@@ -1042,21 +877,21 @@ US-PAY-004; US-PAY-008; US-PAY-009; US-PAY-010; US-ACCESS-011; backend/media del
 | Priority | P0 |
 | User Role | học viên đã thanh toán mua khóa học thành công |
 
-#### B. User Story Statement
+**Mô tả và giá trị — DESC / RAT**
 
 **As a** học viên đã thanh toán mua khóa học thành công  
 **I want to** được truy cập toàn bộ nội dung khóa học đã mua trên các phiên đăng nhập  
 **So that** tôi tiếp tục học đầy đủ và giữ tiến trình đã có.
 
-#### C. Business Context
+**Bối cảnh — RAT**
 
 Dùng chung cho mua sớm, mua tự động và checkout một lần hiện hữu; ownership không đồng nhất với trạng thái trial hoặc lịch thu tiền.
 
-#### D. Preconditions
+**Điều kiện tiên quyết / Input**
 
 Gateway xác nhận thanh toán thành công cho đúng học viên, khóa học, số tiền và tiền tệ; kiểm tra nguồn xác nhận.
 
-#### E. Acceptance Criteria
+**Scenario — xử lý và Output**
 
 **AC1: Cấp quyền đầy đủ — Happy Path**
 
@@ -1094,21 +929,271 @@ Gateway xác nhận thanh toán thành công cho đúng học viên, khóa học
 - **When** yêu cầu tài liệu bảo vệ của khóa B chưa được cấp quyền.
 - **Then** backend từ chối; ownership A không mở rộng sang B.
 
-#### F. UI Component Specification
-
-N/A — cấp quyền do hệ thống xử lý, không tạo màn hình riêng. Trang khóa học/player hiện hữu nhận quyền đầy đủ, CTA Vào học; kết quả cấp quyền chậm dùng MSG-020.
-
-#### G. Related Business Rules
+**Quy tắc nghiệp vụ liên quan**
 
 BR-005, BR-008, BR-010, BR-011, BR-012, BR-013
 
-#### H. Dependencies
+**Phụ thuộc — DEP**
 
 US-PAY-009; US-PAY-010; checkout một lần hiện hữu; US-PLAY-005; backend/media delivery.
 
-## 9. User Story / Business Rule Traceability Matrix
+#### 3.2.3. User class 3 — Quản trị viên vận hành
 
-AC được định danh đầy đủ bằng `User Story ID.ACn`. Bảng ánh xạ hỗ trợ kiểm tra tác động và dẫn xuất test case; không phải chứng nhận UAT. Quy tắc nghiệp vụ được dẫn tại G của từng story.
+##### 3.2.3.1. US-EXP-006 — Tự động hết hạn học thử và thu hồi quyền truy cập
+
+**Thông tin chức năng — ID / TITLE**
+
+| Thuộc tính | Giá trị |
+| --- | --- |
+| User Story ID | US-EXP-006 |
+| User Story Name | Tự động hết hạn học thử và thu hồi quyền truy cập |
+| Epic | Access Management |
+| Priority | P0 |
+| User Role | quản trị viên vận hành nền tảng ANSERA |
+
+**Mô tả và giá trị — DESC / RAT**
+
+**As a** quản trị viên vận hành nền tảng ANSERA  
+**I want to** hệ thống thu hồi toàn bộ quyền trial đúng hạn nếu học viên chưa mua thành công  
+**So that** tôi bảo vệ nội dung khóa học và thực thi đúng thời hạn đã công bố.
+
+**Bối cảnh — RAT**
+
+Thu hồi tại đủ 168 giờ độc lập với độ trễ scheduler/gateway; hủy lịch không làm hết trial sớm.
+
+**Điều kiện tiên quyết / Input**
+
+Trial đã kích hoạt; hệ thống có start/expiry và quyền sở hữu đã xác minh.
+
+**Scenario — xử lý và Output**
+
+**AC1: Hết hạn chính xác — Happy Path**
+
+- **Given** trial còn hoạt động và chưa PAID_ACTIVE.
+- **When** thời gian máy chủ đạt trial_expires_at.
+- **Then** trial thành TRIAL_EXPIRED và course_access = NOT_OWNED; chặn toàn bộ nội dung trial kể cả 50% đầu của Bài 1–3, không đợi retry hoặc kết quả tự mua.
+
+**AC2: Đã hủy thanh toán — Alternative Flow**
+
+- **Given** lịch CANCELED từ ngày 2.
+- **When** trước hạn rồi tới đúng expiry ban đầu.
+- **Then** giữ quyền trial trước hạn; tại hạn thu hồi toàn bộ nếu chưa mua, không gửi khoản tự thu.
+
+**AC3: Thanh toán lỗi hoặc đang xử lý — Negative Path**
+
+- **Given** đã tới expiry và chưa có thành công xác minh.
+- **When** gateway trả thất bại hoặc còn chờ.
+- **Then** không cấp paid/grace access; hiển thị MSG-011 hoặc MSG-012 đúng kết quả, không kéo dài trial.
+
+**AC4: Truy cập lại — Negative Path**
+
+- **Given** trial đã hết hạn, chưa sở hữu.
+- **When** mở bất cứ bài/tài nguyên được bảo vệ, tải lại, đăng nhập lại hoặc dùng URL media cũ.
+- **Then** backend/media từ chối truy cập; giao diện hiển thị MSG-006 và đường thanh toán chủ động; không mở trial lần hai.
+
+**AC5: Đã sở hữu — Edge Case**
+
+- **Given** đã PAID_ACTIVE.
+- **When** tác vụ hết hạn cũ chạy.
+- **Then** không hạ quyền đã mua hoặc đổi CONVERTED về TRIAL_EXPIRED; giữ quyền đầy đủ.
+
+**AC6: Tác vụ chậm/đồng hồ máy sai — Boundary**
+
+- **Given** scheduler chưa cập nhật hàng dữ liệu hoặc máy học viên chỉnh giờ.
+- **When** yêu cầu nội dung tại/sau expiry.
+- **Then** backend dùng thời gian máy chủ và ownership để từ chối ngay nếu chưa mua; không dựa vào banner hoặc thời gian máy học viên để giữ quyền.
+
+**Quy tắc nghiệp vụ liên quan**
+
+BR-001, BR-002, BR-003, BR-004, BR-007, BR-009, BR-010, BR-012
+
+**Phụ thuộc — DEP**
+
+US-PAY-004; US-PAY-008; US-PAY-009; US-PAY-010; US-ACCESS-011; backend/media delivery.
+
+<a id="33-performance-requirements"></a>
+
+### 3.3. Yêu cầu hiệu năng (Performance Requirements)
+
+Baseline chưa chốt response time, throughput, tải đồng thời hoặc thời gian bắt đầu/phản hồi video. **168 giờ và 50% là quy tắc nghiệp vụ**, không phải SLA hiệu năng.
+
+Khung ghi yêu cầu định lượng theo mẫu được để ở trạng thái **chờ bổ sung**, không là cam kết triển khai:
+
+| Thuộc tính | Nội dung |
+| --- | --- |
+| TAG / GIST | Chờ xác định từng yêu cầu hiệu năng trong phạm vi Learning Trial |
+| SCALE | Chờ xác định đại lượng, đơn vị và điều kiện tải |
+| METER | Chờ xác định phương pháp đo, môi trường và bộ dữ liệu |
+| MUST | Chưa có mức bắt buộc được phê duyệt |
+| PLAN | Chưa có mức mục tiêu được phê duyệt |
+| WISH | Chưa có mức mong muốn được phê duyệt |
+
+<a id="34-design-constraints"></a>
+
+### 3.4. Ràng buộc thiết kế (Design Constraints)
+
+| Ràng buộc đã có trong baseline | Truy vết |
+| --- | --- |
+| Tích hợp Authentication và checkout mua một lần hiện hữu; không tạo subscription cho Learning Trial | §2.1; BR-013 |
+| Backend/media phải thực thi quyền; không dùng UI hoặc đồng hồ phía học viên làm nguồn quyết định quyền | BR-012; US-PLAY-005.AC2, AC5; US-EXP-006.AC6 |
+| Giữ ba chiều trial, lịch thanh toán và quyền sở hữu độc lập; không bổ sung PROCESSING vào enum lịch tự mua | §4.2.1 |
+| Mỗi khoản mua và xử lý lặp phải tránh thu trùng, không cấp quyền từ kết quả chưa xác minh | BR-011; US-PAY-009.AC6–AC9; US-ACCESS-011.AC3–AC5 |
+| Dữ liệu thẻ nhạy cảm do gateway thu nhận; không lưu trực tiếp số thẻ đầy đủ hoặc yêu cầu ANSERA lưu CVV | Baseline v3.0, US-PAY-004.F (quy tắc dữ liệu được giữ lại từ phần UI cũ); US-PAY-010.F |
+
+Chưa có giới hạn dung lượng, memory usage, stack, nền tảng triển khai hoặc cấu hình tối thiểu được phê duyệt. Không nhập giới hạn MB, thiết bị hoặc công nghệ từ mẫu.
+
+<a id="35-system-attributes"></a>
+
+### 3.5. Thuộc tính hệ thống (Software System Attributes)
+
+Các mục dưới đây phân loại lại yêu cầu đã có và chỉ ra phần còn thiếu. Không thêm QR/NFR hoặc ngưỡng số mới.
+
+#### 3.5.1. Độ tin cậy (Reliability)
+
+| Hành vi cần bảo đảm từ baseline | Truy vết |
+| --- | --- |
+| Kích hoạt/lập lịch lặp không tạo trial hoặc lịch mới | US-PAY-004.AC5 |
+| Không thu trùng khi callback/tác vụ lặp hoặc cạnh tranh mua sớm | BR-011; US-PAY-009.AC6–AC8; US-PAY-010.AC4 |
+| Thành công thanh toán nhưng chậm cấp quyền phải giữ giao dịch, hoàn tất quyền mà không yêu cầu trả lại | US-ACCESS-011.AC5; MSG-020 |
+| Tác vụ hết hạn không hạ quyền đã mua; callback cũ không tự ghi đè ownership | US-EXP-006.AC5; US-ACCESS-011.AC4 |
+
+Chưa có chỉ tiêu tỷ lệ lỗi, độ tin cậy định lượng, RPO/RTO hoặc cam kết phục hồi.
+
+#### 3.5.2. Tính sẵn sàng (Availability)
+
+Chưa có uptime/SLA hoặc cửa sổ bảo trì được phê duyệt. Trường hợp gateway chưa rõ kết quả phải xử lý theo US-PAY-009.AC8 và OQ-002; không coi việc giữ trạng thái pending là cam kết sẵn sàng hoặc quyền truy cập tạm.
+
+#### 3.5.3. Bảo mật (Security)
+
+| Yêu cầu có sẵn | Truy vết |
+| --- | --- |
+| Kiểm tra quyền đúng học viên/khóa/tài nguyên, ngăn truy cập trực tiếp vượt giới hạn và hết hạn | BR-012; US-PLAY-005.AC2, AC3; US-EXP-006.AC4 |
+| Không tiết lộ trial/thanh toán của học viên khác | US-TRIAL-007.AC5 |
+| Xác minh nguồn và nội dung kết quả gateway trước cấp quyền; redirect client không đủ | US-PAY-009.AC9; US-ACCESS-011.AC3 |
+| Mật khẩu đăng ký ít nhất 8 ký tự và xác nhận trùng; ngăn username trùng | US-AUTH-001.AC1, AC3–AC5 |
+| Không lưu trực tiếp số thẻ đầy đủ hoặc yêu cầu lưu CVV tại ANSERA | §3.4; baseline v3.0 US-PAY-004.F |
+
+Chưa chốt kiến trúc bảo mật, phiên bản TLS, cơ chế mã hóa/lưu trữ mật khẩu, quản trị phiên hoặc cơ chế xác thực callback. Các ví dụ bảo mật trong mẫu/quy tắc tham khảo không tự trở thành quyết định dự án.
+
+#### 3.5.4. Khả năng bảo trì (Maintainability)
+
+Baseline yêu cầu giữ dấu vết giao dịch để đối soát và hoàn tất cấp quyền có thể xử lý lại mà không thu thêm (US-PAY-009.AC6–AC9; US-ACCESS-011.AC5). Chưa có yêu cầu riêng về tổ chức mã nguồn, logging/retention, thời gian sửa lỗi, môi trường kiểm thử hoặc độ bao phủ test. Không khẳng định các tiêu chí này đã đạt.
+
+#### 3.5.5. Khả năng chuyển đổi nền tảng (Portability)
+
+Chưa có danh sách trình duyệt, hệ điều hành hoặc thiết bị hỗ trợ trong baseline. Không kế thừa iOS/Android hoặc yêu cầu ứng dụng mobile từ mẫu.
+
+<a id="4-phu-luc"></a>
+
+## 4. Phụ lục (Supporting Information)
+
+### 4.1. Quy tắc nghiệp vụ (Business Rules)
+
+Áp dụng cho cặp học viên–khóa học. Giữ mã BR-001–BR-014 theo baseline được chỉ định; không đổi sang quy ước mã khác.
+
+| ID | Business Rule | Nguồn |
+| --- | --- | --- |
+| BR-001 | Một học viên chỉ được kích hoạt trial một lần cho mỗi khóa học; kích hoạt lặp/đăng nhập lại không đặt lại lịch sử. | BD-008 |
+| BR-002 | Trial bắt đầu khi kích hoạt thành công; expiry = start + 168 giờ. Quyền trial chỉ hợp lệ khi thời gian máy chủ nhỏ hơn expiry. | BD-002 |
+| BR-003 | Trong trial còn hiệu lực chỉ được phát phần đầu tối đa 50% thời lượng video của từng bài trong 3 bài đầu; xem lại phần được phép không giới hạn. Bài khác và tài liệu bảo vệ bị khóa. | BD-002 |
+| BR-004 | Tại expiry, nếu chưa có quyền đã mua từ thanh toán thành công, thu hồi toàn bộ quyền trial kể cả phần 50% của 3 bài đầu. | BD-006, BD-007 |
+| BR-005 | Học viên đã sở hữu khóa học không được kích hoạt trial hoặc bị tạo khoản mua trùng cho khóa đó qua các luồng bình thường. | BD-005, BD-008 |
+| BR-006 | Trước kích hoạt, phải có phương thức được gateway hỗ trợ và consent rõ ràng cho giá/tiền tệ, thời điểm thu tiền một lần; thay đổi điều kiện phải xác nhận lại. | BD-003 |
+| BR-007 | Hủy lịch tự mua thành công trước expiry ngăn khoản tự thu, giữ nguyên trial và expiry ban đầu. | BD-004 |
+| BR-008 | Mua sớm thành công vô hiệu hóa lịch tự mua cuối kỳ chưa thực thi và giữ tiến trình học nếu có. | BD-005 |
+| BR-009 | Tự mua thất bại không cấp paid access; quyền trial chấm dứt tại expiry. MVP không có grace period nhiều ngày hoặc lịch tự retry. | BD-006 |
+| BR-010 | Thanh toán thành công được gateway xác minh cấp quyền toàn bộ nội dung khóa đã mua, gỡ giới hạn trial và lưu ownership qua các phiên. | BD-005, BD-006 |
+| BR-011 | Các luồng mua sớm/tự mua và yêu cầu/callback lặp cho cùng học viên–khóa phải phối hợp để không thực hiện khoản mua trùng. Khi giao dịch chưa rõ kết quả, không tạo khoản thu độc lập khác. | BD-005, BD-006 |
+| BR-012 | Backend/media delivery thực thi quyền của đúng học viên/khóa/tài nguyên và thời hạn; sửa frontend, URL trực tiếp hoặc đăng nhập lại không vượt được quyền. | BD-002, BD-007 |
+| BR-013 | Khóa học được mua một lần; sau mua không tạo khoản thu định kỳ hoặc subscription cho Learning Trial. | BD-001 |
+| BR-014 | Hủy lịch tự mua không cấm học viên chủ động mua khóa học; mua thất bại không mất trial còn lại trước expiry. | BD-004, BD-005 |
+
+### 4.2. Định nghĩa trạng thái và ma trận chuyển dịch
+
+#### 4.2.1. Ba chiều trạng thái độc lập
+
+| Chiều | Trạng thái | Ý nghĩa |
+| --- | --- | --- |
+| trial_status | NOT_STARTED | Chưa kích hoạt trial; thất bại liên kết không tiêu thụ quyền. |
+| trial_status | TRIAL_ACTIVE | Đã kích hoạt, còn hạn và chưa chuyển đổi mua thành công. |
+| trial_status | TRIAL_EXPIRED | Đã hết 168 giờ khi chưa mua thành công. |
+| trial_status | CONVERTED | Trial đã dùng được chuyển đổi sang mua thành công, kể cả thành công xác minh về sau expiry. |
+| automatic_payment_status | NONE | Chưa lập lịch tự mua. |
+| automatic_payment_status | SCHEDULED | Lịch được lập và chưa có kết quả cuối; không có nghĩa giao dịch đã thành công. |
+| automatic_payment_status | CANCELED | Lịch đã vô hiệu hóa do hủy thành công hoặc đã mua sớm. Không phải hủy quyền trial. |
+| automatic_payment_status | COMPLETED | Khoản tự mua của lịch đã được xác minh thành công. Không dùng cho giao dịch mua chủ động. |
+| automatic_payment_status | FAILED | Tự mua thất bại dứt khoát hoặc không thể thực hiện do phương thức/ủy quyền hết hiệu lực. |
+| course_access | NOT_OWNED | Không có quyền trial hiệu lực hoặc ownership đã mua. |
+| course_access | TRIAL_LIMITED | Chỉ có giới hạn trial hiện còn hiệu lực. |
+| course_access | PAID_ACTIVE | Có ownership từ thanh toán thành công đã được xác minh. |
+
+`course_access` là chiều quyền/ownership khái niệm của baseline; lịch sử đã dùng trial được lưu riêng, không xóa khi quyền về NOT_OWNED. Mua trực tiếp chưa từng trial giữ trial_status = NOT_STARTED và automatic_payment_status = NONE, đồng thời PAID_ACTIVE; không tiêu thụ trial để rồi cho mua/trial trùng.
+
+Không thêm `PROCESSING` vào enum thanh toán tự động đã chốt. Giao dịch đang thực thi/chưa rõ kết quả có dấu vết xử lý riêng của transaction, phân biệt với lịch. Trong thời gian này lịch chưa có kết quả cuối vẫn SCHEDULED; phải kiểm tra transaction trước hủy/gửi mua. Đây là ràng buộc nhất quán dẫn xuất từ yêu cầu chống thu trùng, không phải quyết định retry hoặc hoàn tiền. Tên trường kỹ thuật, timeout và thời hạn đối soát chờ OQ-002.
+
+#### 4.2.2. Ma trận chuyển dịch
+
+Ký hiệu bộ ba: `trial_status / automatic_payment_status / course_access`; “giữ” nghĩa không thay đổi chiều đó. Guards được kiểm tra bằng trạng thái backend/thời gian máy chủ. Không chỉ dựa vào nút hoặc scheduler.
+
+| ID | Trước | Trigger / Vai trò | Preconditions / Guard | Sau | Quyền / ngoại lệ / AC truy vết |
+| --- | --- | --- | --- | --- | --- |
+| ST-01 | NOT_STARTED / NONE / NOT_OWNED | Kích hoạt / học viên + hệ thống | Đủ điều kiện, consent cuối khớp giá/lịch, phương thức xác nhận hỗ trợ | TRIAL_ACTIVE / SCHEDULED / TRIAL_LIMITED | 168 giờ; US-PAY-004.AC1. |
+| ST-02 | NOT_STARTED / NONE / NOT_OWNED | Liên kết lỗi/chưa rõ / gateway | Chưa đủ điều kiện kích hoạt | Giữ | Không tạo quyền/lịch; US-PAY-004.AC4, AC6. |
+| ST-03 | TRIAL_ACTIVE / SCHEDULED / TRIAL_LIMITED | Hủy ngày 2 / học viên | Hủy được chấp nhận trước expiry và trước khi giao dịch được gửi | TRIAL_ACTIVE / CANCELED / TRIAL_LIMITED | Giữ expiry gốc; US-PAY-008.AC1, AC4. |
+| ST-04 | TRIAL_ACTIVE / CANCELED / TRIAL_LIMITED | Hủy lặp / học viên | Lịch đã vô hiệu hóa | Giữ | Không đổi thời hạn; US-PAY-008.AC2. |
+| ST-05 | TRIAL_ACTIVE / SCHEDULED hoặc CANCELED / TRIAL_LIMITED | Mua sớm thành công / gateway + hệ thống | Giao dịch chủ động xác minh thành công | CONVERTED / CANCELED / PAID_ACTIVE | Vô hiệu lịch và giữ tiến trình; US-PAY-010.AC1, AC2; US-ACCESS-011.AC1. |
+| ST-06 | TRIAL_ACTIVE / SCHEDULED hoặc CANCELED / TRIAL_LIMITED | Mua sớm thất bại / gateway | Thất bại dứt khoát, vẫn trước expiry | Giữ | Không hủy lịch đang hợp lệ; US-PAY-010.AC3. |
+| ST-07 | TRIAL_ACTIVE / CANCELED / TRIAL_LIMITED | Đạt expiry / hệ thống | Chưa sở hữu | TRIAL_EXPIRED / CANCELED / NOT_OWNED | Không tự thu, khóa toàn bộ; US-EXP-006.AC2. |
+| ST-08 | TRIAL_ACTIVE / SCHEDULED / TRIAL_LIMITED | Đạt expiry / hệ thống | Chưa sở hữu; tự mua đủ điều kiện, chưa có giao dịch cạnh tranh | TRIAL_EXPIRED / SCHEDULED / NOT_OWNED | Thực hiện một khoản mua; đang chờ không có quyền trial/paid; US-PAY-009.AC8, US-EXP-006.AC1. |
+| ST-09 | TRIAL_EXPIRED / SCHEDULED / NOT_OWNED | Tự mua thành công / gateway | Kết quả xác minh khớp cùng giao dịch | CONVERTED / COMPLETED / PAID_ACTIVE | Ghi giao dịch và cấp quyền; US-PAY-009.AC1, US-ACCESS-011.AC1; lỗi cấp quyền xem ngoại lệ 4.2.3. |
+| ST-10 | TRIAL_EXPIRED / SCHEDULED / NOT_OWNED | Tự mua thất bại / gateway hoặc kiểm tra ủy quyền | Kết quả thất bại dứt khoát hoặc không thể gửi hợp lệ | TRIAL_EXPIRED / FAILED / NOT_OWNED | Không retry/grace tự đặt; US-PAY-009.AC4, AC5. |
+| ST-11 | TRIAL_EXPIRED / CANCELED hoặc FAILED / NOT_OWNED | Mua chủ động sau hạn / checkout hiện hữu | Không có giao dịch chưa rõ kết quả, mua được xác minh thành công | CONVERTED / giữ CANCELED hoặc FAILED / PAID_ACTIVE | Không viết lại lịch sử tự mua thành COMPLETED; US-ACCESS-011.AC1. |
+| ST-12 | TRIAL_EXPIRED / SCHEDULED / NOT_OWNED | Mua bắt đầu trước hạn, thành công về chậm / gateway | Cùng giao dịch chủ động, chưa có khoản thu độc lập khác | CONVERTED / CANCELED / PAID_ACTIVE | Không phục hồi trial; US-PAY-010.AC5. |
+| ST-13 | CONVERTED / CANCELED hoặc COMPLETED hoặc FAILED / PAID_ACTIVE | Callback/tác vụ lặp / hệ thống | Kết quả mua đã xác minh | Giữ | Không thu trùng/hạ quyền; US-ACCESS-011.AC4; US-EXP-006.AC5. |
+| ST-14 | NOT_STARTED / NONE / NOT_OWNED | Mua trực tiếp / checkout hiện hữu | Chưa sở hữu; thanh toán xác minh thành công | NOT_STARTED / NONE / PAID_ACTIVE | Cấp quyền khóa mua, không tạo trial/lịch; US-ACCESS-011.AC1, AC2. |
+
+#### 4.2.3. Bất biến và ngoại lệ
+
+- Trial có hiệu lực ở khoảng `[trial_start, trial_expires_at)`. Scheduler chạy muộn không kéo dài quyền. Tại đúng expiry, quyền trial kết thúc; ownership đã mua có ưu tiên khi kiểm tra truy cập.
+- Không cho TRIAL_EXPIRED/CONVERTED trở lại TRIAL_ACTIVE cho cùng học viên–khóa; không cho CANCELED trở lại SCHEDULED bằng refresh/hủy lặp; không cấp PAID_ACTIVE từ client redirect hoặc gửi request.
+- Hủy được chấp nhận trước hạn phải ngăn gửi thu; nếu giao dịch đã thực thi hoặc yêu cầu đến muộn, không báo thành công giả. Xử lý hoàn/void hoặc ngoại lệ tiếp nhận muộn chờ OQ-003. Không tự mở rộng quyền hủy sau hạn.
+- Chậm callback/timeout không bằng FAILED. Khóa trial khi hết hạn, giữ dấu vết transaction để đối soát; không tự cấp quyền hoặc khởi tạo khoản thu mới. Callback thành công xác minh của cùng giao dịch được xử lý theo ST-09/ST-12; cách giải quyết kết quả chưa rõ kéo dài chờ OQ-002.
+- Kiểm tra nguồn gateway, khóa học, học viên, số tiền/tiền tệ và giao dịch trước cấp quyền. Callback trùng không tạo thu/ownership/biên lai trùng. Callback cũ/mâu thuẫn không hạ ownership; đối soát trước thay kết quả cuối.
+- Thanh toán đã thành công nhưng cập nhật quyền lỗi: giữ giao dịch thành công, MSG-020 và hoàn tất cấp quyền có thể xử lý lại không thu thêm (US-ACCESS-011.AC5). Không báo paid access đã sẵn sàng khi chưa cập nhật quyền; không đổi thanh toán thành FAILED vì lỗi nội bộ. Các bộ ba ST-09/ST-12 là trạng thái đích sau hoàn tất cấp quyền.
+- Mua chủ động thành công sau lịch FAILED giữ FAILED của lịch; không đồng nhất thành công giao dịch chủ động với automatic_payment_status = COMPLETED. Không hạ PAID_ACTIVE bởi tác vụ hết hạn. Refund/chargeback không được tự thiết kế trong phạm vi này.
+
+### 4.3. Danh mục thông báo (Message Catalog)
+
+Thông điệp có placeholder phải hiển thị giá/tiền tệ và thời gian có múi giờ thực tế. Nội dung là bản copy đặc tả, không coi dữ liệu minh họa trên ảnh là giá đã chốt.
+
+| MSG ID | Type | Nội dung tiếng Việt | Trigger condition |
+| --- | --- | --- | --- |
+| MSG-001 | Lỗi | Vui lòng nhập thông tin | Thiếu trường bắt buộc khi gửi đăng ký hoặc liên kết phương thức. |
+| MSG-002 | Cảnh báo | Tên người dùng đã tồn tại | Username đăng ký bị trùng; gắn tại username, không tại password. |
+| MSG-003 | Lỗi | Thông tin chưa hợp lệ | Password dưới 8 ký tự/xác nhận không khớp; email hoặc dữ liệu thanh toán sai quy tắc của phương thức/gateway đã chọn. |
+| MSG-004 | Thông báo | Bạn đã sở hữu khóa học này. Hãy vào học để tiếp tục. | Người đã mua yêu cầu trial/mua lại; giữ ID chống trùng sở hữu từ v2.1. |
+| MSG-005 | Thông báo | Bạn đã hoàn thành thời lượng học thử của bài học này. Vui lòng mở khóa để xem tiếp toàn bộ nội dung. | Chạm/tua tới giới hạn 50% video được trial cho phép. |
+| MSG-006 | Cảnh báo | Thời gian học thử 7 ngày của bạn cho khóa học này đã kết thúc. Vui lòng thanh toán để tiếp tục học tập. | Trial đã hết hạn và chưa sở hữu; không dùng khi chỉ hủy thanh toán trước hạn. |
+| MSG-007 | Thành công | Đã kích hoạt học thử. Bạn có thể học đến {expires_at}. Khoản mua khóa học một lần {amount} {currency} dự kiến được thanh toán lúc {payment_at}, trừ khi bạn hủy trước hạn. | Kích hoạt và lập lịch thành công; thời gian có múi giờ. |
+| MSG-008 | Thành công | Đã hủy thanh toán tự động sau học thử. Bạn vẫn được học thử đến {expires_at} và có thể chủ động mua khóa học. | Hủy đã được ghi nhận thành công, kể cả yêu cầu lặp. |
+| MSG-009 | Thành công | Mua khóa học thành công. Bạn đã có toàn bộ nội dung; khoản mua tự động cuối kỳ đã được vô hiệu hóa. | Mua sớm và cấp quyền hoàn tất. |
+| MSG-010 | Thành công | Khoản mua khóa học một lần sau học thử đã thanh toán thành công. Bạn có thể tiếp tục học toàn bộ khóa học. | Tự mua và cấp quyền hoàn tất. |
+| MSG-011 | Lỗi | Không thể hoàn tất thanh toán tự động sau học thử. Quyền học thử đã hết hạn. Bạn có thể chủ động mua khóa học để tiếp tục. | Tại/sau expiry có kết quả thất bại xác minh hoặc phương thức/ủy quyền không đủ điều kiện. |
+| MSG-012 | Đang xử lý | Yêu cầu đang được kiểm tra kết quả. Vui lòng kiểm tra trạng thái trước khi thực hiện thanh toán khác. | Liên kết/giao dịch chưa rõ kết quả hoặc yêu cầu mua lặp khi đang xử lý; không ngụ ý cấp quyền. |
+| MSG-013 | Cảnh báo | Chưa thể xác nhận hủy: thời hạn hủy đã kết thúc hoặc giao dịch đang được xử lý. Vui lòng kiểm tra trạng thái thanh toán. | Yêu cầu hủy tới hạn/đang có giao dịch thực thi; không hứa hủy/hoàn tiền. |
+| MSG-014 | Thông báo | Bạn đã sử dụng quyền học thử của khóa học này. Mỗi học viên chỉ được học thử một lần cho mỗi khóa học. | Ngăn trial lặp; với trial còn hạn vẫn cho tiếp tục học. |
+| MSG-015 | Cảnh báo | Vui lòng xác nhận điều kiện học thử và khoản mua khóa học một lần sau học thử trước khi tiếp tục. | Chưa có consent hợp lệ. |
+| MSG-016 | Lỗi | Không thể xác thực hoặc liên kết phương thức thanh toán. Vui lòng kiểm tra hoặc chọn phương thức được hỗ trợ khác. | Gateway từ chối liên kết/ủy quyền, chưa kích hoạt trial. |
+| MSG-017 | Thông báo | Nội dung này chỉ được mở sau khi mua khóa học thành công. | Trial yêu cầu bài ngoài 3 bài đầu hoặc tài liệu bảo vệ. |
+| MSG-018 | Lỗi | Chưa thể xác nhận hủy thanh toán tự động. Vui lòng kiểm tra lại trạng thái trước thời điểm hết hạn. | Lỗi ghi nhận/vô hiệu hóa lịch, chưa được xác nhận CANCELED. |
+| MSG-019 | Lỗi | Thanh toán mua khóa học chưa thành công. Bạn vẫn có thể học thử đến {expires_at} nếu thời hạn chưa kết thúc. | Mua chủ động thất bại dứt khoát; không dùng cho giao dịch chưa rõ kết quả. |
+| MSG-020 | Đang xử lý | Thanh toán đã thành công, hệ thống đang hoàn tất cấp quyền khóa học. Bạn không cần thanh toán lại. | Thành công đã xác minh nhưng cập nhật entitlement chưa hoàn tất. |
+
+Các MSG-* là mã thông báo hiện hành, bao gồm cả thành công, cảnh báo và đang xử lý. Chưa có ma trận lỗi API/HTTP hoặc localization key được chốt; không tự chuyển mọi MSG thành lỗi kỹ thuật.
+
+### 4.4. Ma trận truy vết
+
+AC được định danh đầy đủ bằng `User Story ID.ACn`. Bảng ánh xạ hỗ trợ kiểm tra tác động và dẫn xuất test case; không phải chứng nhận UAT. Quy tắc nghiệp vụ được dẫn tại mục Quy tắc nghiệp vụ liên quan của từng chức năng.
 
 | Business Rule | User Stories tham chiếu |
 | --- | --- |
@@ -1140,22 +1225,45 @@ AC được định danh đầy đủ bằng `User Story ID.ACn`. Bảng ánh x�
 
 **INVEST review:** 11 story giữ baseline đã chỉ định. Mỗi story có mục tiêu/giá trị và AC quan sát được; dependencies được nêu thay vì khẳng định độc lập tuyệt đối. US-PAY-009 có nhiều nhánh cạnh tranh/đối soát, cần đội Dev ước lượng trước khi nhận sprint; chưa khẳng định Small/Estimable đạt khi OQ-001–OQ-003 chưa chốt. Không tự tách hoặc thêm story. Ngưỡng video nhiều video/bài chờ OQ-005.
 
-## 10. UI Change Log
+### 4.5. Backlog theo Epic
 
-Tất cả 11 tham chiếu ảnh từ v2.1 được giữ nguyên URL/alt text. Đã xem nội dung 11 ảnh; không sửa, xóa hoặc ghi đè asset. Ảnh là minh họa hiện trạng, phần đặc tả/BD mới có ưu tiên khi có mâu thuẫn. Không tạo đường dẫn ảnh mới cho 5 story bổ sung.
+#### Authentication
 
-| Nhóm màn hình | Số ảnh | Đánh giá / cập nhật cần làm |
-| --- | --- | --- |
-| US-AUTH-001 | 3 | Giữ homepage/form/lỗi; sửa lỗi bảng v2.1 gắn MSG-002 tại password sang username. Copy bảo mật/OAuth trong ảnh không được suy rộng thành thiết kế mới. |
-| US-CRS-002 | 1 | Giữ cấu trúc chi tiết, huy hiệu và CTA; bổ sung các trạng thái trial/đã mua. Giá minh họa không cố định. |
-| US-ENR-003 | 1 | **UI Update Required:** bỏ $20 USD mỗi tháng và quyền mọi khóa/chứng chỉ, thay bằng khóa đang chọn, giá một lần, lịch thu và consent chủ động; mô tả hủy lịch mà vẫn học tới hạn. |
-| US-PAY-004 | 3 | **UI Update Required:** thể hiện mua một lần/consent cuối, ngày giờ có múi giờ, thống nhất giá với khóa; form/validation theo gateway; không mặc định 0đ, CVV 3 số hoặc một tập thẻ áp dụng cho mọi phương thức. |
-| US-PLAY-005 | 2 | **UI Update Required:** cập nhật banner theo lịch/cancellation, bỏ nội dung chưa chốt về giảm giá, hoàn tiền 7 ngày, chứng chỉ, trọn đời/cập nhật miễn phí; giữ Seek Guard/Paywall/replay. |
-| US-EXP-006 | 1 | **UI Update Required:** phân biệt hết hạn, thất bại và đang xử lý; CTA tránh tạo thu mới khi giao dịch chưa rõ. Giá theo khóa. |
-| US-TRIAL-007, US-PAY-008, US-PAY-010 | 0 | Chưa có screenshot trong repo; đặc tả component tại F để thiết kế sau, không tuyên bố đã tạo UI. |
-| US-PAY-009, US-ACCESS-011 | 0 | System-triggered, F = N/A; dùng thông báo/trang trạng thái hiện hữu. |
+| User Story ID | Tên | Priority | Xử lý so với v2.1 |
+| --- | --- | --- | --- |
+| US-AUTH-001 | Đăng ký tài khoản học viên mới | P0 | KEEP |
 
-## 11. Open Questions & Assumptions
+#### Trial Enrollment
+
+| User Story ID | Tên | Priority | Xử lý so với v2.1 |
+| --- | --- | --- | --- |
+| US-CRS-002 | Xem thông tin khóa học và quyền học thử | P0 | KEEP / REVISE |
+| US-ENR-003 | Xem và xác nhận điều kiện học thử | P1 | KEEP / REVISE |
+| US-PAY-004 | Liên kết phương thức thanh toán và kích hoạt học thử | P0 | KEEP / REVISE |
+
+#### Trial Experience
+
+| User Story ID | Tên | Priority | Xử lý so với v2.1 |
+| --- | --- | --- | --- |
+| US-PLAY-005 | Trải nghiệm nội dung học thử có giới hạn | P0 | KEEP / REVISE |
+| US-TRIAL-007 | Xem trạng thái và thời gian học thử | P1 | NEW |
+
+#### Purchase & Payment
+
+| User Story ID | Tên | Priority | Xử lý so với v2.1 |
+| --- | --- | --- | --- |
+| US-PAY-008 | Hủy thanh toán tự động sau học thử | P0 | NEW |
+| US-PAY-009 | Tự động mua khóa học khi kết thúc thời hạn học thử | P0 | NEW / EXTRACT FROM US-PAY-004 |
+| US-PAY-010 | Thanh toán mở khóa khóa học trước thời hạn | P0 | NEW |
+
+#### Access Management
+
+| User Story ID | Tên | Priority | Xử lý so với v2.1 |
+| --- | --- | --- | --- |
+| US-EXP-006 | Tự động hết hạn học thử và thu hồi quyền truy cập | P0 | KEEP / REVISE |
+| US-ACCESS-011 | Cấp quyền truy cập đầy đủ sau khi mua khóa học thành công | P0 | NEW |
+
+### 4.6. Câu hỏi mở và giả định
 
 Không biến câu hỏi sau thành điều kiện hoặc cam kết kinh doanh đã được phê duyệt. BD-001–BD-008 vẫn áp dụng trong khi chưa có quyết định bổ sung.
 
@@ -1170,4 +1278,39 @@ Không biến câu hỏi sau thành điều kiện hoặc cam kết kinh doanh �
 
 **Giả định kỹ thuật để kiểm chứng:** có thể xác minh kết quả gateway và lưu lịch/transaction/ownership nhất quán; đây là điều kiện cần kiểm chứng khi chọn tích hợp, chưa phải bằng chứng runtime. Backend dùng thời gian máy chủ; hiển thị timestamp có múi giờ, chưa áp đặt một múi giờ kinh doanh hoặc ngưỡng hiệu năng cụ thể.
 
-**Kiểm tra tài liệu v3.0:** 11 story / 5 Epic; mỗi story đủ A–H và AC Given–When–Then; 14 BR có truy vết; MSG-001–MSG-020 có trigger và tham chiếu nhất quán; ba chiều trạng thái tách biệt, bao phủ hủy ngày 2, mua sớm, hết hạn, thất bại, callback lặp/chậm và cạnh tranh. Giữ 11 link ảnh; không thay asset. Đây là review cấu trúc/ngữ nghĩa của đặc tả, chưa phải test ứng dụng/gateway hoặc nghiệm thu stakeholder; các OQ cần review trước thiết kế tích hợp và triển khai nhánh tương ứng.
+### 4.7. Ánh xạ cấu trúc v3.0 → v3.1
+
+| Nội dung v3.0 | Vị trí v3.1 |
+| --- | --- |
+| §1 Document Information | §1 Thông tin tài liệu |
+| §2 Feature Overview; §3 Confirmed Business Decisions | §2.1–2.2 |
+| §4 Backlog | §4.5 |
+| §5 Business Rules | §4.1 |
+| §6 States / Transitions | §4.2 |
+| §7 Messages | §4.3 |
+| §8 Detailed Stories (A–E, G–H) | §3.2, nhóm theo user class; giữ nguyên nội dung |
+| §8.F UI; §10 UI Change Log | Thay bằng chỗ trống tại §3.1.1; quy tắc dữ liệu thanh toán được giữ tại §3.4/3.5.3 |
+| §9 Traceability | §4.4 |
+| §11 Open Questions / Assumptions | §4.6 |
+| Hiệu năng / thiết kế / thuộc tính hệ thống | §3.3–3.5: phân loại lại nội dung có sẵn; thiếu dữ liệu ghi chờ bổ sung |
+
+| ID chức năng giữ nguyên | Mục cũ | Mục mới |
+| --- | --- | --- |
+| US-AUTH-001 | 8.1 | 3.2.1.1 |
+| US-CRS-002 | 8.2 | 3.2.2.1 |
+| US-ENR-003 | 8.3 | 3.2.2.2 |
+| US-PAY-004 | 8.4 | 3.2.2.3 |
+| US-PLAY-005 | 8.5 | 3.2.2.4 |
+| US-TRIAL-007 | 8.6 | 3.2.2.5 |
+| US-PAY-008 | 8.7 | 3.2.2.6 |
+| US-PAY-009 | 8.8 | 3.2.2.7 |
+| US-PAY-010 | 8.9 | 3.2.2.8 |
+| US-ACCESS-011 | 8.11 | 3.2.2.9 |
+| US-EXP-006 | 8.10 | 3.2.3.1 |
+
+### 4.8. Trạng thái bổ sung và phạm vi kiểm tra
+
+- UI và hình: để trống tại §3.1.1 cho từng chức năng; không nhúng ảnh cũ hoặc tạo đường dẫn ảnh giả. Các file ảnh cũ trong repository được giữ nguyên.
+- Chưa bổ sung yêu cầu/ngưỡng chưa có nguồn: hiệu năng, phần cứng, dung lượng/bộ nhớ, SLA, portability và contract tích hợp.
+- 11 story / 5 Epic, 66 scenario AC, 8 BD, 14 BR, 20 MSG, 14 chuyển dịch ST và 6 OQ được giữ; chỉ đổi cách tổ chức và vị trí trình bày.
+- Đây là kiểm tra tài liệu; chưa là kiểm thử ứng dụng, tích hợp gateway hoặc nghiệm thu stakeholder.
